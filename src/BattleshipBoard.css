@@ -1,0 +1,64 @@
+:root {
+    --battleship-board-width: 400px;
+    --battleship-board-size: 8;
+    --battleship-square-width: calc(var(--battleship-board-width) / var(--battleship-board-size));
+}
+
+.battleship_board_container {
+    display: flex;
+}
+
+.battleship_board {
+    width: var(--battleship-board-width);
+    height: var(--battleship-board-width);
+    margin: 1em;
+    display: grid;
+}
+
+.battleship_board > * {
+    grid-area: 1 / 1 / 1 / 1;
+    width: 100%;
+    height: 100%;
+}
+
+.battleship_board > table {
+    border-collapse: collapse;
+}
+
+.battleship_board > table tr td {
+    border: 2px solid black;
+}
+
+.battleship_board > div {
+    position: relative;
+}
+
+.battleship_board > div > div {
+    position: absolute;
+    left: calc(var(--ship-position-x) * var(--battleship-square-width));
+    top: calc(var(--ship-position-y) * var(--battleship-square-width));
+}
+
+.shipyard {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    padding: 1em;
+}
+
+.shipyard > div {
+    display: flex;
+    gap: 1em;
+}
+
+.ship {
+    width: calc(var(--ship-width) * var(--battleship-square-width));
+    height: calc(var(--ship-height) * var(--battleship-square-width));
+    background-color: var(--primary-color-accent);
+    border: 2px solid var(--primary-color);
+    box-sizing: border-box;
+}
+
+.shipyard .ship[draggable="false"] {
+    opacity: 0.3;
+}

@@ -1,0 +1,47 @@
+.mainContent {
+  display: flex;
+}
+
+.mainContent > * {
+  width: 100%;
+}
+
+.App-header {
+  padding: 1em;
+  width: 100%;
+  background-color: var(--primary-color);
+  color: white;
+  font-size: 3em;
+  font-weight: bold;
+  border-bottom: 3px solid black;
+}
+
+.App-header > div {
+  text-align: center;
+}
+
+input[type="button"] {
+  padding: 1em;
+  font-weight: bold;
+  cursor:pointer;
+
+  border-radius: 0px;
+  border: 2px solid var(--primary-color);
+
+  background-color: var(--primary-color);
+  color: white;
+  transition: background-color .1s;
+}
+
+input[type="button"]:hover {
+  background-color: white;
+  color: var(--primary-color);
+}
+
+input[type="button"].disabled {
+  font-weight: normal;
+  border: 1px solid gray;
+  background-color: rgb(233, 233, 233);
+  color: rgb(111, 111, 111);
+  cursor: auto;
+}
