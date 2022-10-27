@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 import './App.css';
 import MainChessboard from './boards/MainChessboard';
 import BattleshipSetupBoard from './boards/BattleshipSetupBoard';
-import BattleshipBoard from './boards/BattleshipBoard';
+import BattleChessboard from './boards/BattleChessboard';
 
 class App extends React.Component {
 
@@ -170,8 +170,8 @@ class App extends React.Component {
                 </header>
                 <div className='mainContent'>
                     <MainChessboard chess={this.state.chess} color={this.state.color} onMove={this.onMove} />
-                    <BattleshipBoard board={this.state.board} size={this.size} color={this.state.color} />
-                    <BattleshipBoard board={this.state.opponentBoard} size={this.size} color={this.state.color} />
+                    <BattleChessboard chess={this.state.chess} board={this.state.board} size={this.size} color={this.state.color} />
+                    <BattleChessboard chess={this.state.chess} board={this.state.opponentBoard} size={this.size} color={this.state.color} />
                 </div>
             </div>
         );

@@ -1,51 +1,51 @@
-
-import React from "react";
 import "./BattleshipBoard.css";
-import { Chess } from "chess.js";
 
-class BattleChessboard extends React.Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {};
-        this.onDrop = this.onDrop.bind(this);
+function getContent(props, colIdx, rowIdx) {
+    if (props.color === 'b') {
+        return props.board[props.size - colIdx - 1][props.size - rowIdx - 1];
     }
+    return props.board[colIdx][rowIdx];
+}
 
-    onDrop({ sourceSquare, targetSquare, pieceInfo }) {
-        let chess = new Chess();
-        chess.loadPgn(this.props.chess.pgn());
+function square(x, y) {
+    let alphabet = 'abcdefghijklmnopqrstuvwxyz';
+    return `${alphabet[x]}${8 - y}`
+}
 
-        if (chess.move({
-            from: sourceSquare,
-            to: targetSquare
-        })) {
-            this.props.onMove(sourceSquare, targetSquare, pieceInfo);
-        }
+
+function pieceOverlay(props, x, y) {
+    if (props.color === 'b') {
+        x = props.size - x - 1;
+        y = props.size - y - 1;
     }
-
-    squareStatus(x, y) {
-        if (this.props.color === 'b') {
-            x = this.props.size - x;
-            y = this.props.size - y;
-        }
-        return this.props.opponentBoard[x][y];
+    let piece = props.chess.get(square(x, y));
+    if(!piece) {
+        return null;
     }
+    let filename = `${process.env.PUBLIC_URL}/pieces/cburnett/${piece.color}${piece.type.toUpperCase()}.svg`;
+    return (<img src={filename} alt={`${piece.color}${piece.type.toUpperCase()}`}/>);
+}
 
-    render() {
-        return (<div className="battleship_board">
-            <table>
-                <tbody>
-                    {Array.from({ length: this.props.size }, (_, rowIdx) =>
-                        <tr key={rowIdx}>
-                            {Array.from({ length: this.props.size }, (_, colIdx) =>
-                                <td key={colIdx} data-square-status={this.squareStatus(colIdx, rowIdx)} />
-                            )}
-                        </tr>
-                    )}
-                </tbody>
-            </table>
-        </div>);
-    }
+function BattleChessboard(props) {
+    return (
+        <div className="battleship_board_container">
+            <div className="battleship_board">
+                <table>
+                    <tbody>
+                        {Array.from({ length: props.size }, (_, rowIdx) =>
+                            <tr key={rowIdx}>
+                                {Array.from({ length: props.size }, (_, colIdx) =>
+                                    <td data-content={getContent(props, colIdx, rowIdx)} key={colIdx} >
+                                        {pieceOverlay(props, colIdx, rowIdx)}
+                                    </td>
+                                )}
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
 }
 
 export default BattleChessboard;
