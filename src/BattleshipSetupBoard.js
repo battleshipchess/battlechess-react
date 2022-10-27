@@ -9,34 +9,45 @@ class BattleshipSetupBoard extends React.Component {
 
         this.ships = [
             {
-                amount: 3,
-                shape: 'x',
-            },
-            {
-                amount: 2,
-                shape: 'xx',
+                amount: 1,
+                shape: 'xxxx',
             },
             {
                 amount: 1,
                 shape: 'xxx',
             },
             {
-                amount: 1,
-                shape: 'xxxx',
+                amount: 2,
+                shape: 'xx',
+            },
+            {
+                amount: 3,
+                shape: 'x',
             },
         ];
 
         let shipState = [];
         this.ships.forEach(shipType => {
             for (let i = 0; i < shipType.amount; i++) {
-                shipState.push({
-                    position: {
-                        x: Math.floor(Math.random() * this.props.size),
-                        y: Math.floor(Math.random() * this.props.size),
-                        width: shipType.shape.length,
-                        height: 1,
-                    },
-                });
+                let position = {
+                    x: Math.floor(Math.random() * this.props.size),
+                    y: Math.floor(Math.random() * this.props.size),
+                    width: shipType.shape.length,
+                    height: 1,
+                };
+                if(Math.random() < .5) {
+                    let w = position.width;
+                    position.width = position.height;
+                    position.height = w;
+                }
+
+                if(this.isDropPositionPossible(shipState, position)) {
+                    shipState.push({
+                        position: position,
+                    });
+                } else {
+                    i--;
+                }
             }
         })
 

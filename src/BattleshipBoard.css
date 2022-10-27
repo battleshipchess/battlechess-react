@@ -29,6 +29,26 @@
     border: 2px solid black;
 }
 
+.battleship_board > table tr td[data-content="."] {
+    background-image: url('./png/shot.png');
+    background-size: cover;
+}
+
+.battleship_board > table tr td[data-content="x"], .battleship_board > table tr td[data-content="i"] {
+    background-image: url('./png/shot.png');
+    background-size: cover;
+}
+
+.battleship_board > table tr td[data-content="+"] {
+    background-color: var(--primary-ship-color-accent);
+    border-color: var(--primary-ship-color);
+}
+
+.battleship_board > table tr td[data-content="-"] {
+    background-color: var(--primary-sunk-color-accent);
+    border-color: var(--primary-sunk-color);
+}
+
 .battleship_board > div {
     position: relative;
 }
@@ -54,8 +74,8 @@
 .ship {
     width: calc(var(--ship-width) * var(--battleship-square-width));
     height: calc(var(--ship-height) * var(--battleship-square-width));
-    background-color: var(--primary-color-accent);
-    border: 2px solid var(--primary-color);
+    background-color: var(--primary-ship-color-accent);
+    border: 2px solid var(--primary-ship-color);
     box-sizing: border-box;
 }
 

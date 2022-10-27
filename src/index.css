@@ -1,18 +1,24 @@
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+        monospace;
 }
 
 :root {
-  --primary-color: navy;
-  --primary-color-accent: rgba(200, 200, 228);
+    --primary-color: rgb(0, 0, 128);
+    --primary-color-accent: rgba(200, 200, 228);
+    --primary-ship-color: rgb(0, 0, 128);
+    --primary-ship-color-accent: rgba(200, 200, 228);
+    --primary-hit-color: rgb(128, 0, 0);
+    --primary-hit-color-accent: rgba(228, 150, 150);
+    --primary-sunk-color: rgb(128, 128, 128);
+    --primary-sunk-color-accent: rgb(200, 200, 200);
 }
