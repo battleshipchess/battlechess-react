@@ -2,9 +2,9 @@ import React from 'react';
 import { Chess } from 'chess.js'
 import Cookies from 'js-cookie';
 import './App.css';
-import MainChessboard from './MainChessboard';
-import BattleshipSetupBoard from './BattleshipSetupBoard';
-import BattleshipBoard from './BattleshipBoard';
+import MainChessboard from './boards/MainChessboard';
+import BattleshipSetupBoard from './boards/BattleshipSetupBoard';
+import BattleshipBoard from './boards/BattleshipBoard';
 
 class App extends React.Component {
 
