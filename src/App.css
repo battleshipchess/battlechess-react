@@ -2,10 +2,6 @@
   display: flex;
 }
 
-.mainContent > * {
-  width: 100%;
-}
-
 .App-header {
   padding: 1em;
   width: 100%;
