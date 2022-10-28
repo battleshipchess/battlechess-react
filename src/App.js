@@ -103,6 +103,7 @@ class App extends React.Component {
 
     onMove(sourceSquare, targetSquare, _) {
         if (!this.state.ws) return;
+        if (this.state.chess.turn() !== this.state.color) return;
         let chess = new Chess();
         chess.loadPgn(this.state.chess.pgn());
         chess.move({
@@ -169,9 +170,8 @@ class App extends React.Component {
                     <div>Battle to the death</div>
                 </header>
                 <div className='mainContent'>
-                    <MainChessboard chess={this.state.chess} color={this.state.color} onMove={this.onMove} />
-                    <BattleChessboard chess={this.state.chess} board={this.state.board} size={this.size} color={this.state.color} />
-                    <BattleChessboard chess={this.state.chess} board={this.state.opponentBoard} size={this.size} color={this.state.color} />
+                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} size={this.size} color={this.state.color} />
+                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} />
                 </div>
             </div>
         );
