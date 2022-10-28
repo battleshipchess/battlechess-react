@@ -24,17 +24,26 @@ input[type="button"] {
   border-radius: 0px;
   border: 2px solid var(--primary-color);
 
-  background-color: var(--primary-color);
-  color: white;
+  background-color: white;
+  color: var(--primary-color);
+
   transition: background-color .1s;
 }
 
-input[type="button"]:hover {
-  background-color: white;
-  color: var(--primary-color);
+input[type="button"][data-type="primary"] {
+    background-color: var(--primary-color);
+    color: white;
 }
 
-input[type="button"].disabled {
+input[type="button"][data-type="primary"]:hover {
+    background-color: white;
+    color: var(--primary-color);
+}
+
+input[type="button"]:hover {
+}
+
+input[type="button"][data-type="disabled"] {
   font-weight: normal;
   border: 1px solid gray;
   background-color: rgb(233, 233, 233);

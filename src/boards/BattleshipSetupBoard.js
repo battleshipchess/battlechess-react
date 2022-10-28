@@ -29,25 +29,14 @@ class BattleshipSetupBoard extends React.Component {
         let shipState = [];
         this.ships.forEach(shipType => {
             for (let i = 0; i < shipType.amount; i++) {
-                let position = {
-                    x: Math.floor(Math.random() * this.props.size),
-                    y: Math.floor(Math.random() * this.props.size),
-                    width: shipType.shape.length,
-                    height: 1,
-                };
-                if(Math.random() < .5) {
-                    let w = position.width;
-                    position.width = position.height;
-                    position.height = w;
-                }
-
-                if(this.isDropPositionPossible(shipState, position)) {
-                    shipState.push({
-                        position: position,
-                    });
-                } else {
-                    i--;
-                }
+                shipState.push({
+                    position: {
+                        x: null,
+                        y: null,
+                        width: shipType.shape.length,
+                        height: 1,
+                    },
+                });
             }
         })
 
@@ -59,6 +48,36 @@ class BattleshipSetupBoard extends React.Component {
         this.dropShip = this.dropShip.bind(this);
         this.rotateShip = this.rotateShip.bind(this);
         this.startGame = this.startGame.bind(this);
+        this.randomizeShips = this.randomizeShips.bind(this);
+    }
+
+    randomizeShips() {
+        let ships = JSON.parse(JSON.stringify(this.state.ships));
+        ships.forEach(ship => {
+            ship.position.x = null;
+            ship.position.y = null;
+        });
+        ships.forEach(ship => {
+            let done = false;
+            let newPosition = {};
+            while(!done) {
+                newPosition.x = Math.floor(Math.random() * this.props.size);
+                newPosition.y = Math.floor(Math.random() * this.props.size);
+                if(Math.random() < .5) {
+                    newPosition.width = ship.position.width;
+                    newPosition.height = ship.position.height;
+                } else {
+                    newPosition.width = ship.position.height;
+                    newPosition.height = ship.position.width;
+                }
+
+                done = this.isDropPositionPossible(ships, newPosition);
+            }
+            ship.position = newPosition;
+        })
+        this.setState({
+            ships: ships
+        })
     }
 
     squareWidth() {
@@ -201,9 +220,10 @@ class BattleshipSetupBoard extends React.Component {
             )}
             {
                 this.isFullyPlaced() ?
-                    <input type="button" value="START GAME" onClick={this.startGame} /> :
-                    <input type="button" value="START GAME" className="disabled" />
+                    <input type="button" data-type="primary" value="START GAME" onClick={this.startGame} /> :
+                    <input type="button" data-type="disabled" value="START GAME" />
             }
+            <input type="button" value="Randomize" onClick={this.randomizeShips} /> :
         </div>)
     }
 
