@@ -1,33 +1,35 @@
 .mainContent {
-  display: flex;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .App-header {
-  padding: 1em;
-  width: 100%;
-  background-color: var(--primary-color);
-  color: white;
-  font-size: 3em;
-  font-weight: bold;
-  border-bottom: 3px solid black;
+    padding: 1em;
+    width: 100%;
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 3em;
+    font-weight: bold;
+    border-bottom: 3px solid black;
 }
 
-.App-header > div {
-  text-align: center;
+.App-header>div {
+    text-align: center;
 }
 
 input[type="button"] {
-  padding: 1em;
-  font-weight: bold;
-  cursor:pointer;
+    padding: 1em;
+    font-weight: bold;
+    cursor: pointer;
 
-  border-radius: 0px;
-  border: 2px solid var(--primary-color);
+    border-radius: 0px;
+    border: 2px solid var(--primary-color);
 
-  background-color: white;
-  color: var(--primary-color);
+    background-color: white;
+    color: var(--primary-color);
 
-  transition: background-color .1s;
+    transition: background-color .1s;
 }
 
 input[type="button"][data-type="primary"] {
@@ -40,13 +42,12 @@ input[type="button"][data-type="primary"]:hover {
     color: var(--primary-color);
 }
 
-input[type="button"]:hover {
-}
+input[type="button"]:hover {}
 
 input[type="button"][data-type="disabled"] {
-  font-weight: normal;
-  border: 1px solid gray;
-  background-color: rgb(233, 233, 233);
-  color: rgb(111, 111, 111);
-  cursor: auto;
+    font-weight: normal;
+    border: 1px solid gray;
+    background-color: rgb(233, 233, 233);
+    color: rgb(111, 111, 111);
+    cursor: auto;
 }

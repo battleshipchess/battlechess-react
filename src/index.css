@@ -14,11 +14,11 @@ code {
 
 :root {
     --primary-color: rgb(0, 0, 128);
-    --primary-color-accent: rgba(200, 200, 228);
+    --primary-color-accent: rgba(150, 150, 228);
     --primary-ship-color: rgb(0, 0, 128);
-    --primary-ship-color-accent: rgba(200, 200, 228);
+    --primary-ship-color-accent: rgba(130, 130, 228);
     --primary-hit-color: rgb(128, 0, 0);
-    --primary-hit-color-accent: rgba(228, 150, 150);
+    --primary-hit-color-accent: rgba(228, 80, 80);
     --primary-sunk-color: rgb(128, 128, 128);
-    --primary-sunk-color-accent: rgb(200, 200, 200);
+    --primary-sunk-color-accent: rgb(150, 150, 150);
 }

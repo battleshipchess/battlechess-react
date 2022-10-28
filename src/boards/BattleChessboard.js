@@ -13,8 +13,12 @@ function square(x, y) {
     return `${alphabet[x]}${8 - y}`
 }
 
+function squareColor(x, y) {
+    return ["light", "dark"][(x + y) % 2];
+}
+
 function onChessPieceDragStart(event) {
-    let pieceDiv = event.target.closest(".chessPiece");
+    let pieceDiv = event.target.closest(".chessPieceOverlay");
     if (!pieceDiv) {
         return;
     }
@@ -24,7 +28,7 @@ function onChessPieceDragStart(event) {
 }
 
 function onChessPieceDragEnd(event) {
-    let pieceDiv = event.target.closest(".chessPiece");
+    let pieceDiv = event.target.closest(".chessPieceOverlay");
     if (!pieceDiv) {
         return;
     }
@@ -41,11 +45,15 @@ function pieceOverlay(props, x, y) {
         return null;
     }
     let filename = `${process.env.PUBLIC_URL}/pieces/cburnett/${piece.color}${piece.type.toUpperCase()}.svg`;
-    return (<div className="chessPiece" draggable="true" data-piece={piece.type} data-piececolor={piece.color} data-square={square(x, y)}
+    return (<div className="chessPieceOverlay" draggable="true" data-piece={piece.type} data-piececolor={piece.color} data-square={square(x, y)}
         onDragStart={onChessPieceDragStart}
         onDragEnd={onChessPieceDragEnd}>
         <img src={filename} alt={`${piece.color}${piece.type.toUpperCase()}`} />
     </div>);
+}
+
+function shipOverlay(content) {
+    return (<div data-content={content} className="shipOverlay" />);
 }
 
 function BattleChessboard(props) {
@@ -63,26 +71,20 @@ function BattleChessboard(props) {
             x = props.size - x - 1;
             y = props.size - y - 1;
         }
-    
+
         props.onMove(event.dataTransfer.getData("text"), square(x, y));
     }
 
     return (
         <div className="battleship_board_container">
             <div className="battleship_board" onDrop={onDrop} onDragOver={(event) => event.preventDefault()}>
-                <table>
-                    <tbody>
-                        {Array.from({ length: props.size }, (_, rowIdx) =>
-                            <tr key={rowIdx}>
-                                {Array.from({ length: props.size }, (_, colIdx) =>
-                                    <td data-content={getContent(props, colIdx, rowIdx)} key={colIdx} >
-                                        {pieceOverlay(props, colIdx, rowIdx)}
-                                    </td>
-                                )}
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
+                {Array.from({ length: props.size }, (_, rowIdx) =>
+                    Array.from({ length: props.size }, (_, colIdx) =>
+                        <div data-col={colIdx + 1} data-row={rowIdx + 1} key={`${colIdx}${rowIdx}`} >
+                            {shipOverlay(getContent(props, colIdx, rowIdx))}
+                            {pieceOverlay(props, colIdx, rowIdx)}
+                        </div>
+                    )).flat()}
             </div>
         </div>
     );
