@@ -135,7 +135,8 @@ class BattleshipSetupBoard extends React.Component {
     }
 
     dropShip(event) {
-        if (!event.target.classList.contains('battleship_drop_target')) {
+        let gridElement = event.target.closest(".battleship_drop_target");
+        if (!gridElement) {
             return;
         }
 
@@ -143,7 +144,7 @@ class BattleshipSetupBoard extends React.Component {
         var [idx, xOffset, yOffset] = event.dataTransfer.getData("text").split(";");
         let ships = JSON.parse(JSON.stringify(this.state.ships));
 
-        let bounds = event.target.getBoundingClientRect();
+        let bounds = gridElement.getBoundingClientRect();
         let xPositionInBoard = event.clientX - bounds.x - xOffset + .5 * this.squareWidth();
         let yPositionInBoard = event.clientY - bounds.y - yOffset + .5 * this.squareWidth();
 
