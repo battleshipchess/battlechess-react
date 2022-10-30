@@ -1,9 +1,9 @@
 import React from 'react';
-import { Chess } from 'chess.js'
 import Cookies from 'js-cookie';
 import './App.css';
 import BattleshipSetupBoard from './boards/BattleshipSetupBoard';
 import BattleChessboard from './boards/BattleChessboard';
+import Battlechess from './Battlechess';
 import ChessClock from './ChessClock';
 
 import UIfx from 'uifx';
@@ -47,7 +47,7 @@ class App extends React.Component {
         }
 
         this.state = {
-            chess: new Chess(),
+            chess: new Battlechess(),
             board: board,
             gameState: this.states.setup,
             playerId: Cookies.get("playerId"),
@@ -110,8 +110,8 @@ class App extends React.Component {
             })
         } else {
             this.playSound(data.lastAction);
-            let chess = new Chess();
-            chess.loadPgn(data.pgn);
+            let chess = new Battlechess();
+            chess.loadMoveHistory(data.moveHistory);
             let gameState = this.states.making_move;
             if (chess.turn() !== data.color) {
                 gameState = this.states.opponent_move;
@@ -134,20 +134,10 @@ class App extends React.Component {
         if (this.state.chess.turn() !== this.state.color) return;
         if (this.state.chess.turn() !== this.state.color) return;
 
-        let chess = new Chess();
-        chess.loadPgn(this.state.chess.pgn());
-        let move = chess.move({
-            from: sourceSquare,
-            to: targetSquare,
-        });
-        if (!move) {
-            move = chess.move({
-                from: sourceSquare,
-                to: targetSquare,
-                promotion: 'q',
-            })
-        }
-
+        let chess = new Battlechess();
+        chess.loadMoveHistory(this.state.chess.moveHistory);
+        let move = chess.move(sourceSquare, targetSquare);
+        console.log(targetSquare);
         if (move) {
             this.state.ws.send(JSON.stringify({
                 messageType: "MAKE_MOVE",
