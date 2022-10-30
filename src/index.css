@@ -13,7 +13,7 @@ code {
 }
 
 :root {
-    --primary-color: rgb(0, 0, 128);
+    --primary-color: rgba(70, 70, 200);
     --primary-color-accent: rgba(150, 150, 228);
     --primary-ship-color: rgb(0, 0, 128);
     --primary-ship-color-accent: rgba(130, 130, 228);

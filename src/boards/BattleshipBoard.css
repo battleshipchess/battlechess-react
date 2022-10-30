@@ -8,6 +8,22 @@
     display: flex;
 }
 
+.battleship_setup_board {
+    width: var(--battleship-board-width);
+    height: var(--battleship-board-width);
+    background-image: url("./board_brown.svg");
+    display: grid;
+    position:
+}
+
+.battleship_setup_board > * {
+    grid-area: 1 / 1 / 1 / 1;
+}
+
+.battleship_drop_target {
+    position: relative;
+}
+
 .battleship_board {
     width: var(--battleship-board-width);
     height: var(--battleship-board-width);
@@ -74,6 +90,12 @@
     background-color: var(--primary-ship-color-accent);
     border: 2px solid var(--primary-ship-color);
     box-sizing: border-box;
+}
+
+.ship[data-position="absolute"] {
+    position: absolute;
+    left: calc(var(--ship-position-x) * var(--battleship-square-width));   
+    top: calc(var(--ship-position-y) * var(--battleship-square-width));   
 }
 
 .shipyard .ship[draggable="false"] {

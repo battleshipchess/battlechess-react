@@ -1,0 +1,21 @@
+.chess_clock {
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    
+    font-size: 1.5em;
+}
+
+.chess_clock > div > div:nth-child(1) {
+    font-weight: bold;
+}
+
+.chess_clock > div > div:nth-child(2) {
+    font-weight: bold;
+    color: rgb(128, 128, 128);
+}
+
+.chess_clock > div > div.ticking {
+    color: black;
+}

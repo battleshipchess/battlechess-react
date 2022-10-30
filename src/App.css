@@ -18,6 +18,15 @@
     text-align: center;
 }
 
+.App-header[data-state="game_over"] {
+    background-color: rgb(61, 61, 61);
+}
+
+.waitingForOpponent {
+    font-size: 1.5em;
+    padding: 2em;
+}
+
 input[type="button"] {
     padding: 1em;
     font-weight: bold;
@@ -50,4 +59,12 @@ input[type="button"][data-type="disabled"] {
     background-color: rgb(233, 233, 233);
     color: rgb(111, 111, 111);
     cursor: auto;
+}
+
+.faded {
+    opacity: .5;
+}
+
+.disabled {
+    pointer-events: none;
 }

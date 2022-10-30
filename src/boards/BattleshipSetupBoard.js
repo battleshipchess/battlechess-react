@@ -81,7 +81,7 @@ class BattleshipSetupBoard extends React.Component {
     }
 
     squareWidth() {
-        return document.getElementsByClassName('battleship_board')[0].getBoundingClientRect().width / this.props.size;
+        return document.getElementsByClassName('battleship_setup_board')[0].getBoundingClientRect().width / this.props.size;
     }
 
     onShipyardDragStart(event) {
@@ -228,7 +228,7 @@ class BattleshipSetupBoard extends React.Component {
     }
 
     board() {
-        return (<div className="battleship_board" onDrop={this.dropShip} onDragOver={this.allowDrop}>
+        return (<div className="battleship_setup_board" onDrop={this.dropShip} onDragOver={this.allowDrop}>
             <table>
                 <tbody>
                     {Array.from({ length: this.props.size }, (_, idx) =>
@@ -251,6 +251,7 @@ class BattleshipSetupBoard extends React.Component {
                             "--ship-width": ship.position.width,
                             "--ship-height": ship.position.height,
                         }}
+                        data-position="absolute"
                         data-idx={idx} /> : null
                 ).filter(ship => ship !== null)}
             </div>
