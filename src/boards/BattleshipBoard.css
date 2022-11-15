@@ -16,7 +16,7 @@
     position:
 }
 
-.battleship_setup_board > * {
+.battleship_setup_board>* {
     grid-area: 1 / 1 / 1 / 1;
 }
 
@@ -33,7 +33,7 @@
     margin: 1em;
 }
 
-.battleship_board > div {
+.battleship_board>div {
     grid-column: attr(data-col);
     grid-row: attr(data-row);
     position: relative;
@@ -45,7 +45,8 @@
     height: 100%;
 }
 
-.shipOverlay[data-content="."], .shipOverlay[data-content="i"] {
+.shipOverlay[data-content="."],
+.shipOverlay[data-content="i"] {
     background-image: url('./png/shot.png');
     background-size: cover;
     opacity: .8;
@@ -79,7 +80,7 @@
     padding: 1em;
 }
 
-.shipyard > div {
+.shipyard>div {
     display: flex;
     gap: 1em;
 }
@@ -94,10 +95,28 @@
 
 .ship[data-position="absolute"] {
     position: absolute;
-    left: calc(var(--ship-position-x) * var(--battleship-square-width));   
-    top: calc(var(--ship-position-y) * var(--battleship-square-width));   
+    left: calc(var(--ship-position-x) * var(--battleship-square-width));
+    top: calc(var(--ship-position-y) * var(--battleship-square-width));
 }
 
 .shipyard .ship[draggable="false"] {
     opacity: 0.3;
+}
+
+.fromSquare {
+    position: absolute;
+    border: .5em solid rgb(80, 80, 80);
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    box-sizing: border-box;
+}
+
+.toSquare {
+    position: absolute;
+    border: .5em solid rgb(80, 80, 80);
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    box-sizing: border-box;
 }

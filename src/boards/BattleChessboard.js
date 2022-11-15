@@ -56,8 +56,23 @@ function shipOverlay(content) {
     return (<div data-content={content} className="shipOverlay" />);
 }
 
-function BattleChessboard(props) {
+function lastMoveHighlight(x, y, props) {
+    if (props.color === 'b') {
+        x = props.size - x - 1;
+        y = props.size - y - 1;
+    }
+    if (props.lastMove)
+        console.log(props.lastMove.from, square(x, y));
+    if (props.lastMove != null && props.lastMove.from === square(x, y)) {
+        return (<div className="fromSquare"></div>);
+    } else if (props.lastMove != null && props.lastMove.to === square(x, y)) {
+        return (<div className="toSquare"></div>);
+    }
+    return (<div></div>);
+}
 
+function BattleChessboard(props) {
+    console.log(props.lastMove)
     let onDrop = (event) => {
         event.preventDefault();
         let battleshipBoardDiv = event.target.closest(".battleship_board");
@@ -82,6 +97,7 @@ function BattleChessboard(props) {
                     Array.from({ length: props.size }, (_, colIdx) =>
                         <div data-col={colIdx + 1} data-row={rowIdx + 1} key={`${colIdx}${rowIdx}`} >
                             {shipOverlay(getContent(props, colIdx, rowIdx))}
+                            {lastMoveHighlight(colIdx, rowIdx, props)}
                             {pieceOverlay(props, colIdx, rowIdx)}
                         </div>
                     )).flat()}

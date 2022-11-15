@@ -108,6 +108,22 @@ class App extends React.Component {
             this.setState({
                 gameState: this.states.setup,
             })
+        } else if (data.messageType === "UPDATE_STATE" && data.state === "GAME_OVER") {
+            let chess = new Battlechess();
+            chess.loadMoveHistory(data.moveHistory);
+            this.setState({
+                gameState: this.states.game_over,
+                winner: data.winner,
+                winCondition: data.winCondition,
+                chess: chess,
+                color: data.color,
+                board: data.board,
+                opponentBoard: data.opponentBoard,
+                leftoverTime: data.leftoverTime,
+                opponentLeftoverTime: data.opponentLeftoverTime,
+                lastTimeSync: Date.now(),
+                lastMove: data.lastMove,
+            })
         } else {
             this.playSound(data.lastAction);
             let chess = new Battlechess();
@@ -125,6 +141,7 @@ class App extends React.Component {
                 leftoverTime: data.leftoverTime,
                 opponentLeftoverTime: data.opponentLeftoverTime,
                 lastTimeSync: Date.now(),
+                lastMove: data.lastMove,
             })
         }
     }
@@ -137,7 +154,6 @@ class App extends React.Component {
         let chess = new Battlechess();
         chess.loadMoveHistory(this.state.chess.moveHistory);
         let move = chess.move(sourceSquare, targetSquare);
-        console.log(targetSquare);
         if (move) {
             this.state.ws.send(JSON.stringify({
                 messageType: "MAKE_MOVE",
@@ -180,9 +196,7 @@ class App extends React.Component {
 
     resetGame() {
         Cookies.set("playerId", this.randomId());
-        this.setState({
-            playerId: Cookies.get("playerId"),
-        })
+        window.location.reload();
     }
 
     renderBoardSetup() {
@@ -207,11 +221,21 @@ class App extends React.Component {
                 </header>
                 <div className='mainContent'>
                     <ChessClock leftoverTime={this.state.leftoverTime} opponentLeftoverTime={this.state.opponentLeftoverTime} lastTimeSync={this.state.lastTimeSync} turn={this.state.chess.turn()} color={this.state.color} />
-                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} size={this.size} color={this.state.color} />
-                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} />
+                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} size={this.size} color={this.state.color} lastMove={this.state.lastMove} />
+                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} lastMove={this.state.lastMove} />
                 </div>
             </div>
         );
+    }
+
+    renderWinner() {
+        if (this.state.winner === null) {
+            return <div className="game_result">It's a DRAW. Time for a rematch</div>
+        } else if (this.state.winner === this.state.color) {
+            return <div className="game_result">Congratulations! You Won!</div>
+        } else {
+            return <div className="game_result">Looks like you lost. Better luck next time!</div>
+        }
     }
 
     renderGameOver() {
@@ -222,9 +246,10 @@ class App extends React.Component {
                 </header>
                 <div className='mainContent faded disabled'>
                     <ChessClock leftoverTime={this.state.leftoverTime} opponentLeftoverTime={this.state.opponentLeftoverTime} lastTimeSync={this.state.lastTimeSync} turn={this.state.chess.turn()} color={this.state.color} />
-                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} size={this.size} color={this.state.color} />
-                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} />
+                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} size={this.size} color={this.state.color} lastMove={this.state.lastMove} />
+                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} lastMove={this.state.lastMove} />
                 </div>
+                {this.renderWinner()}
                 <div style={{ display: "flex", justifyContent: "center" }}>
                     <input type="button" data-type="primary" value="PLAY AGAIN" onClick={this.resetGame} />
                 </div>

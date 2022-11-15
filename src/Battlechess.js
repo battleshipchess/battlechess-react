@@ -67,6 +67,7 @@ class Battlechess {
         if(hit) {
             let newFen = this.chess.fen().split(" ");
             newFen[1] = swap_color(newFen[1]); // stay at same color
+            newFen[3] = '-'; // remove en passant square
             newFen[5] = newFen[1] === BLACK ? newFen[5] - 1 : newFen[5]; // stay at same fullmove count
             newFen = newFen.join(" ");
             this.chess = new Chess(newFen);
