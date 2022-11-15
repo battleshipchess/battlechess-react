@@ -105,7 +105,7 @@
 
 .fromSquare {
     position: absolute;
-    border: .5em solid rgb(80, 80, 80);
+    border: .25em solid rgb(80, 80, 80);
     width: 100%;
     height: 100%;
     border-radius: 100%;
@@ -113,6 +113,15 @@
 }
 
 .toSquare {
+    position: absolute;
+    border: .25em solid rgb(80, 80, 80);
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    box-sizing: border-box;
+}
+
+.selectedPiece  {
     position: absolute;
     border: .5em solid rgb(80, 80, 80);
     width: 100%;

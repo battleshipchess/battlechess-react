@@ -57,6 +57,7 @@ class App extends React.Component {
         this.handleMessage = this.handleMessage.bind(this);
         this.onBoardSetupCompleted = this.onBoardSetupCompleted.bind(this);
         this.resetGame = this.resetGame.bind(this);
+        this.selectPiece = this.selectPiece.bind(this);
     }
 
     componentDidMount() {
@@ -148,7 +149,9 @@ class App extends React.Component {
 
     onMove(sourceSquare, targetSquare, _) {
         if (!this.state.ws) return;
-        if (this.state.chess.turn() !== this.state.color) return;
+        this.setState({
+            selectedPiece: null,
+        })
         if (this.state.chess.turn() !== this.state.color) return;
 
         let chess = new Battlechess();
@@ -166,6 +169,12 @@ class App extends React.Component {
                 chess: chess,
             });
         }
+    }
+
+    selectPiece(x, y) {
+        this.setState({
+            selectedPiece: { x, y }
+        })
     }
 
     onBoardSetupCompleted(ships) {
@@ -221,8 +230,8 @@ class App extends React.Component {
                 </header>
                 <div className='mainContent'>
                     <ChessClock leftoverTime={this.state.leftoverTime} opponentLeftoverTime={this.state.opponentLeftoverTime} lastTimeSync={this.state.lastTimeSync} turn={this.state.chess.turn()} color={this.state.color} />
-                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} size={this.size} color={this.state.color} lastMove={this.state.lastMove} />
-                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} lastMove={this.state.lastMove} />
+                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} size={this.size} color={this.state.color} lastMove={this.state.lastMove} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} />
+                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} lastMove={this.state.lastMove} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} />
                 </div>
             </div>
         );
@@ -246,8 +255,8 @@ class App extends React.Component {
                 </header>
                 <div className='mainContent faded disabled'>
                     <ChessClock leftoverTime={this.state.leftoverTime} opponentLeftoverTime={this.state.opponentLeftoverTime} lastTimeSync={this.state.lastTimeSync} turn={this.state.chess.turn()} color={this.state.color} />
-                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} size={this.size} color={this.state.color} lastMove={this.state.lastMove} />
-                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} lastMove={this.state.lastMove} />
+                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} size={this.size} color={this.state.color} lastMove={this.state.lastMove} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} />
+                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} lastMove={this.state.lastMove} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} />
                 </div>
                 {this.renderWinner()}
                 <div style={{ display: "flex", justifyContent: "center" }}>
