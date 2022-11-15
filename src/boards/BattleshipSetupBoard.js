@@ -223,7 +223,7 @@ class BattleshipSetupBoard extends React.Component {
                     <input type="button" data-type="primary" value="START GAME" onClick={this.startGame} /> :
                     <input type="button" data-type="disabled" value="START GAME" />
             }
-            <input type="button" value="Randomize" onClick={this.randomizeShips} /> :
+            <input type="button" value="Randomize" onClick={this.randomizeShips} />
         </div>)
     }
 
