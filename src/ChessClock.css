@@ -1,21 +1,31 @@
 .chess_clock {
+    width: 100%;
     padding: 1em;
     display: flex;
-    flex-direction: column;
+    flex-direction: row-reverse;
     justify-content: space-between;
-    
+    align-content: space-between;
     font-size: 1.5em;
 }
 
-.chess_clock > div > div:nth-child(1) {
+@media only screen and (min-width: 600px) {
+    .chess_clock {
+        width: auto;
+        flex-direction: column;
+        justify-content: space-between;
+        align-content: unset;
+    }
+}
+
+.chess_clock>div>div:nth-child(1) {
     font-weight: bold;
 }
 
-.chess_clock > div > div:nth-child(2) {
+.chess_clock>div>div:nth-child(2) {
     font-weight: bold;
     color: rgb(128, 128, 128);
 }
 
-.chess_clock > div > div.ticking {
+.chess_clock>div>div.ticking {
     color: black;
 }

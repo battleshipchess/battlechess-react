@@ -1,11 +1,21 @@
 :root {
-    --battleship-board-width: 500px;
+    --battleship-board-width: min(500px, 90vw);
+    --battleship-half-board-width: var(--battleship-board-width);
     --battleship-board-size: 8;
     --battleship-square-width: calc(var(--battleship-board-width) / var(--battleship-board-size));
+    --battleship-half-square-width: calc(var(--battleship-half-board-width) / var(--battleship-half-board-size));
 }
+
+@media only screen and (min-width: 600px) {
+    :root {
+        --battleship-half-board-width: min(500px, 30vw);
+    }
+}
+
 
 .battleship_board_container {
     display: flex;
+    flex-wrap: wrap;
 }
 
 .battleship_setup_board {
@@ -25,8 +35,8 @@
 }
 
 .battleship_board {
-    width: var(--battleship-board-width);
-    height: var(--battleship-board-width);
+    width: var(--battleship-half-board-width);
+    height: var(--battleship-half-board-width);
     display: grid;
     grid-template-columns: repeat(8, minmax(0, 1fr));
     grid-template-rows: repeat(8, minmax(0, 1fr));
@@ -121,7 +131,7 @@
     box-sizing: border-box;
 }
 
-.selectedPiece  {
+.selectedPiece {
     position: absolute;
     border: .5em solid rgb(80, 80, 80);
     width: 100%;
