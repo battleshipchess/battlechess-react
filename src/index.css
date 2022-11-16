@@ -21,4 +21,7 @@ code {
     --primary-hit-color-accent: rgba(228, 80, 80);
     --primary-sunk-color: rgb(128, 128, 128);
     --primary-sunk-color-accent: rgb(150, 150, 150);
+
+    --last-move-color: rgba(155, 199, 0, 0.41);
+    --selected-color: rgba(20,85,30,0.5);
 }

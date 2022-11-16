@@ -15,7 +15,7 @@ const defaultFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 // UTILITY FUNCTIONS
 function swap_color(c) {
     return c === WHITE ? BLACK : WHITE
-}   
+}
 // ----------------
 
 class Move {
@@ -64,7 +64,7 @@ class Battlechess {
 
         this.moveHistory.push(new Move(newMove, hit));
 
-        if(hit) {
+        if (hit) {
             let newFen = this.chess.fen().split(" ");
             newFen[1] = swap_color(newFen[1]); // stay at same color
             newFen[3] = '-'; // remove en passant square
@@ -84,8 +84,8 @@ class Battlechess {
         return this.chess.get(square);
     }
 
-    moves() {
-        return this.chess.moves();
+    moves({ verbose, square, }) {
+        return this.chess.moves({ verbose, square, });
     }
 }
 

@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import "./BattleshipBoard.css";
 import "./Chessboard.css";
 
@@ -17,11 +18,12 @@ function squareColor(x, y) {
     return ["light", "dark"][(x + y) % 2];
 }
 
-function onChessPieceDragStart(event) {
+function onChessPieceDragStart(event, props) {
     let pieceDiv = event.target.closest(".chessPieceOverlay");
     if (!pieceDiv) {
         return;
     }
+    props.selectPiece(pieceDiv.dataset.x, pieceDiv.dataset.y);
     event.dataTransfer.setData("text", `${pieceDiv.dataset.square}`);
     event.dataTransfer.dropEffect = "move";
     setTimeout(() => pieceDiv.classList.add("draggingChessPiece"), 1)
@@ -45,8 +47,8 @@ function pieceOverlay(props, x, y, selectPiece) {
         return null;
     }
     let filename = `${process.env.PUBLIC_URL}/pieces/cburnett/${piece.color}${piece.type.toUpperCase()}.svg`;
-    return (<div className="chessPieceOverlay" draggable="true" data-piece={piece.type} data-piececolor={piece.color} data-square={square(x, y)}
-        onDragStart={onChessPieceDragStart}
+    return (<div className="chessPieceOverlay" draggable="true" data-piece={piece.type} data-piececolor={piece.color} data-square={square(x, y)} data-x={x} data-y={y}
+        onDragStart={(event) => onChessPieceDragStart(event, props)}
         onDragEnd={onChessPieceDragEnd}
         onClick={selectPiece}>
         <img src={filename} alt={`${piece.color}${piece.type.toUpperCase()}`} />
@@ -75,8 +77,16 @@ function selectedPieceHighlight(x, y, props) {
         x = props.size - x - 1;
         y = props.size - y - 1;
     }
-    if (props.selectedPiece && props.selectedPiece.x == x && props.selectedPiece.y == y) {
-        return (<div className="selectedPiece" />);
+    if (props.selectedPiece) {
+        if (props.selectedPiece.x == x && props.selectedPiece.y == y) {
+            return (<div className="selectedPiece" />);
+        }
+        let squareName = square(props.selectedPiece.x, props.selectedPiece.y);
+        let moveOptions = props.chess.chess.moves({ square: squareName, verbose: true });
+        moveOptions = moveOptions.map(move => move.to);
+        if (moveOptions.includes(square(x, y))) {
+            return (<div className="moveOption" />);
+        }
     }
     return <div />;
 }
@@ -98,6 +108,8 @@ function calculateCoordinates(event, color, size) {
 }
 
 function BattleChessboard(props) {
+    const boardRef = useRef(null);
+
     let onDrop = (event) => {
         event.preventDefault();
 
@@ -121,9 +133,24 @@ function BattleChessboard(props) {
         }
     }
 
+    useEffect(() => {
+        let deselectPiece = (event) => {
+            event.preventDefault();
+            props.deselectPiece();
+        }
+
+        if (boardRef.current) {
+            boardRef.current.addEventListener('contextmenu', deselectPiece);
+        }
+
+        return () => {
+            boardRef.current.removeEventListener('contextmenu', deselectPiece);
+        }
+    });
+
     return (
         <div className="battleship_board_container">
-            <div className="battleship_board" onDrop={onDrop} onDragOver={(event) => event.preventDefault()} onClick={selectPiece}>
+            <div className="battleship_board" onDrop={onDrop} onDragOver={(event) => event.preventDefault()} onClick={selectPiece} ref={boardRef}>
                 {Array.from({ length: props.size }, (_, rowIdx) =>
                     Array.from({ length: props.size }, (_, colIdx) =>
                         <div data-col={colIdx + 1} data-row={rowIdx + 1} key={`${colIdx}${rowIdx}`} >
