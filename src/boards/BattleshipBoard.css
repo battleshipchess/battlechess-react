@@ -1,14 +1,14 @@
 :root {
-    --battleship-board-width: min(500px, 90vw);
+    --battleship-board-width: calc(100vw - 2em);
     --battleship-half-board-width: var(--battleship-board-width);
     --battleship-board-size: 8;
     --battleship-square-width: calc(var(--battleship-board-width) / var(--battleship-board-size));
-    --battleship-half-square-width: calc(var(--battleship-half-board-width) / var(--battleship-half-board-size));
+    --battleship-half-square-width: calc(var(--battleship-half-board-width) / var(--battleship-board-size));
 }
 
 @media only screen and (min-width: 600px) {
     :root {
-        --battleship-half-board-width: min(500px, 30vw);
+        --battleship-half-board-width: min(500px, 40vw);
     }
 }
 
@@ -35,6 +35,13 @@
     margin: 1em;
 }
 
+@media only screen and (min-width: 600px) {
+    .battleship_setup_board {
+        width: var(--battleship-half-board-width);
+        height: var(--battleship-half-board-width);
+    }
+}
+
 .battleship_setup_board>* {
     grid-area: 1 / 1 / 1 / 1;
 }
@@ -49,7 +56,6 @@
     display: grid;
     grid-template-columns: repeat(8, minmax(0, 1fr));
     grid-template-rows: repeat(8, minmax(0, 1fr));
-    margin: 1em;
 }
 
 .battleship_board>div {
@@ -121,6 +127,19 @@
 .shipyard .ship[draggable="false"] {
     opacity: 0.3;
 }
+
+@media only screen and (min-width: 600px) {
+    .ship {
+        width: calc(var(--ship-width) * var(--battleship-half-square-width));
+        height: calc(var(--ship-height) * var(--battleship-half-square-width));
+    }
+
+    .ship[data-position="absolute"] {
+        left: calc(var(--ship-position-x) * var(--battleship-half-square-width));
+        top: calc(var(--ship-position-y) * var(--battleship-half-square-width));
+    }
+}
+
 
 .fromSquare {
     position: absolute;

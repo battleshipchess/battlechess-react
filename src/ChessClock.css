@@ -1,19 +1,21 @@
 .chess_clock {
     width: 100%;
-    padding: 1em;
     display: flex;
     flex-direction: row-reverse;
     justify-content: space-between;
     align-content: space-between;
     font-size: 1.5em;
+    overflow: hidden;
 }
 
 @media only screen and (min-width: 600px) {
     .chess_clock {
-        width: auto;
+        width: fit-content;
+        font-size: min(1.5em, calc(2vw));
         flex-direction: column;
         justify-content: space-between;
         align-content: unset;
+        text-align: right;
     }
 }
 
