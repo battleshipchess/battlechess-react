@@ -16,14 +16,23 @@
 .battleship_board_container {
     display: flex;
     flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
 }
+
+@media only screen and (min-width: 600px) {
+    .battleship_board_container {
+        flex-direction: row;
+    }
+}
+
 
 .battleship_setup_board {
     width: var(--battleship-board-width);
     height: var(--battleship-board-width);
     background-image: url("./board_brown.svg");
     display: grid;
-    position:
+    margin: 1em;
 }
 
 .battleship_setup_board>* {
