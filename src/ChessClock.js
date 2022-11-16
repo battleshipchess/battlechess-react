@@ -31,7 +31,7 @@ class ChessClock extends React.Component {
 
     render() {
         return (<div className="chess_clock">
-            <div><div>Opponent</div><div id="opponent_time" className={this.props.turn !== this.props.color ? "ticking" : ""}>{this.formatTime(this.props.opponentLeftoverTime, this.props.turn !== this.props.color)}</div></div>
+            <div><div>Opponent</div><div id="opponent_time" className={this.props.turn && this.props.turn !== this.props.color ? "ticking" : ""}>{this.formatTime(this.props.opponentLeftoverTime, this.props.turn !== this.props.color)}</div></div>
             <div><div>You</div><div id="own_time" className={this.props.turn === this.props.color ? "ticking" : ""}>{this.formatTime(this.props.leftoverTime, this.props.turn === this.props.color)}</div></div>
         </div>);
     }
