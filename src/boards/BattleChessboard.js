@@ -154,8 +154,8 @@ function BattleChessboard(props) {
                 {Array.from({ length: props.size }, (_, rowIdx) =>
                     Array.from({ length: props.size }, (_, colIdx) =>
                         <div data-col={colIdx + 1} data-row={rowIdx + 1} key={`${colIdx}${rowIdx}`} >
-                            {shipOverlay(getContent(props, colIdx, rowIdx))}
                             {lastMoveHighlight(colIdx, rowIdx, props)}
+                            {shipOverlay(getContent(props, colIdx, rowIdx))}
                             {selectedPieceHighlight(colIdx, rowIdx, props)}
                             {pieceOverlay(props, colIdx, rowIdx, selectPiece)}
                         </div>

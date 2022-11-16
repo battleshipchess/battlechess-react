@@ -168,6 +168,8 @@ class App extends React.Component {
 
             this.setState({
                 chess: chess,
+                leftoverTime: this.state.leftoverTime - (Date.now() - this.state.lastTimeSync),
+                lastTimeSync: Date.now(),
             });
         }
     }
