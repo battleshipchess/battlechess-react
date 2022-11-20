@@ -48,6 +48,7 @@ class BattleshipSetupBoard extends React.Component {
         this.dropShip = this.dropShip.bind(this);
         this.rotateShip = this.rotateShip.bind(this);
         this.startGame = this.startGame.bind(this);
+        this.startPrivateGame = this.startPrivateGame.bind(this);
         this.randomizeShips = this.randomizeShips.bind(this);
     }
 
@@ -194,8 +195,19 @@ class BattleshipSetupBoard extends React.Component {
         return fullyPlaced;
     }
 
+    randomGameCode() {
+        const dateString = Date.now().toString(36);
+        const randomness = Math.random().toString(36).substring(2);
+        return dateString + randomness;
+    }
+
     startGame() {
-        this.props.onBoardSetupCompleted(this.state.ships);
+        this.props.onBoardSetupCompleted(this.state.ships, this.props.gameCode);
+    }
+
+    startPrivateGame() {
+        let gameCode = this.randomGameCode();
+        this.props.onBoardSetupCompleted(this.state.ships, gameCode);
     }
 
     shipyard() {
@@ -220,8 +232,13 @@ class BattleshipSetupBoard extends React.Component {
             )}
             {
                 this.isFullyPlaced() ?
-                    <input type="button" data-type="primary" value="START GAME" onClick={this.startGame} /> :
-                    <input type="button" data-type="disabled" value="START GAME" />
+                <input type="button" data-type="primary" value="START GAME" onClick={this.startGame} /> :
+                <input type="button" data-type="disabled" value="START GAME" />
+            }
+            {
+                this.isFullyPlaced() ?
+                <input type="button" data-type="primary" value="START PRIVATE GAME" onClick={this.startPrivateGame} /> :
+                <input type="button" data-type="disabled" value="START PRIVATE GAME" />
             }
             <input type="button" value="Randomize" onClick={this.randomizeShips} />
         </div>)

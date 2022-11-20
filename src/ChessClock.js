@@ -7,11 +7,7 @@ class ChessClock extends React.Component {
         this.state = {};
     }
 
-    formatTime(leftoverTime, tick) {
-        let leftoverMillis = leftoverTime;
-        if (tick) {
-            leftoverMillis -= Date.now() - this.props.lastTimeSync;
-        }
+    formatTime(leftoverMillis) {
         let mm = Math.max(0, Math.floor(leftoverMillis / 1000 / 60));
         let ss = Math.max(0, Math.floor((leftoverMillis / 1000) % 60));
         if (mm < 10) mm = "0" + mm;
@@ -19,10 +15,52 @@ class ChessClock extends React.Component {
         return `${mm}:${ss}`;
     }
 
+    initRefreshInterval() {
+        if (this.refreshIntervalId) {
+            clearInterval(this.refreshIntervalId);
+        }
+        if (this.props.turn) {
+            this.refreshIntervalId = setInterval(() => {
+                let opponentTime = null;
+                let playerTime = null;
+                if (this.props.turn === null) {
+                    opponentTime = this.props.opponentLeftoverTime;
+                    playerTime = this.props.leftoverTime;
+                } else if (this.props.turn === this.props.color) {
+                    opponentTime = this.props.opponentLeftoverTime;
+                    playerTime = this.props.leftoverTime - (Date.now() - this.props.lastTimeSync);
+                } else {
+                    opponentTime = this.props.opponentLeftoverTime - (Date.now() - this.props.lastTimeSync);
+                    playerTime = this.props.leftoverTime;
+                }
+
+                if (opponentTime < 0 || playerTime < 0) {
+                    this.props.onTimeOut();
+                }
+                this.setState({
+                    opponentTime: this.formatTime(opponentTime),
+                    playerTime: this.formatTime(playerTime)
+                })
+            }, 100);
+        } else {
+            this.setState({
+                opponentTime: this.formatTime(this.props.opponentLeftoverTime),
+                playerTime: this.formatTime(this.props.leftoverTime)
+            })
+        }
+    }
+
     componentDidMount() {
-        this.refreshIntervalId = setInterval(() => {
-            this.setState({ update: Date.now() })
-        }, 100);
+        this.initRefreshInterval();
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.turn !== this.props.turn
+            || prevProps.color !== this.props.color
+            || prevProps.opponentLeftoverTime !== this.props.opponentLeftoverTime
+            || prevProps.leftoverTime !== this.props.leftoverTime) {
+            this.initRefreshInterval();
+        }
     }
 
     componentWillUnmount() {
@@ -30,9 +68,16 @@ class ChessClock extends React.Component {
     }
 
     render() {
+        let opponentClass = "";
+        let playerClass = "";
+        if (this.props.turn !== null && this.props.turn === this.props.color) {
+            playerClass = "ticking";
+        } else if (this.props.turn !== null) {
+            opponentClass = "ticking";
+        }
         return (<div className="chess_clock">
-            <div><div>Opponent</div><div id="opponent_time" className={this.props.turn && this.props.turn !== this.props.color ? "ticking" : ""}>{this.formatTime(this.props.opponentLeftoverTime, this.props.turn !== this.props.color)}</div></div>
-            <div><div>You</div><div id="own_time" className={this.props.turn === this.props.color ? "ticking" : ""}>{this.formatTime(this.props.leftoverTime, this.props.turn === this.props.color)}</div></div>
+            <div><div>Opponent</div><div id="opponent_time" className={opponentClass}>{this.state.opponentTime}</div></div>
+            <div><div>You</div><div id="own_time" className={playerClass}>{this.state.playerTime}</div></div>
         </div>);
     }
 }

@@ -26,19 +26,22 @@ class App extends React.Component {
         }
 
         this.boardStates = {
+            // not ship
             empty: ' ',
-            ship: '+',
-            shot: '.',
-            hit: 'x',
-            sunk: '-',
+            shot: 'x',
             illegal: 'i',
+
+            // ship
+            ship: 's',
+            hit: '+',
+            sunk: '#',
         }
 
         let board = [];
         for (let x = 0; x < this.size; x++) {
             board.push([]);
             for (let y = 0; y < this.size; y++) {
-                board[x].push(' ');
+                board[x].push(this.boardStates.empty);
             }
         }
 
@@ -59,9 +62,17 @@ class App extends React.Component {
         this.resetGame = this.resetGame.bind(this);
         this.selectPiece = this.selectPiece.bind(this);
         this.deselectPiece = this.deselectPiece.bind(this);
+        this.onTimeOut = this.onTimeOut.bind(this);
     }
 
     componentDidMount() {
+        var url = new URL(window.location.href);
+        var gameCode = url.searchParams.get("game");
+        if (gameCode) {
+            this.setState({
+                gameCode: gameCode
+            });
+        }
         const ws = new WebSocket(`ws://${process.env.REACT_APP_WS_HOST}:${process.env.REACT_APP_WS_PORT}`);
         ws.addEventListener('message', this.handleMessage);
         ws.addEventListener('open', () => {
@@ -85,6 +96,7 @@ class App extends React.Component {
         const missSound = new UIfx(missSoundFile, { volume: .3 });
         const hitSound = new UIfx(hitSoundFile, { volume: .3 });
         const sinkSound = new UIfx(sinkSoundFile, { volume: .3 });
+        console.log(lastAction);
         switch (lastAction) {
             case this.boardStates.hit:
                 hitSound.play();
@@ -186,7 +198,7 @@ class App extends React.Component {
         })
     }
 
-    onBoardSetupCompleted(ships) {
+    onBoardSetupCompleted(ships, gameCode) {
         let board = JSON.parse(JSON.stringify(this.state.board));
         ships.forEach(ship => {
             for (let x = ship.position.x; x < ship.position.x + ship.position.width; x++) {
@@ -205,16 +217,25 @@ class App extends React.Component {
             messageType: "START_GAME",
             playerId: this.state.playerId,
             board: board,
+            gameCode: gameCode,
         }));
 
         this.setState({
             gameState: this.states.waiting_for_opponent,
+            gameCode: gameCode,
         })
     }
 
     resetGame() {
         Cookies.set("playerId", this.randomId());
         window.location.reload();
+    }
+
+    onTimeOut() {
+        this.state.ws.send(JSON.stringify({
+            messageType: "QUERY_GAME_STATUS",
+            playerId: this.state.playerId,
+        }))
     }
 
     renderBoardSetup() {
@@ -224,7 +245,7 @@ class App extends React.Component {
                     <div>Welcome to BattleChess</div>
                 </header>
                 <div className='mainContent'>
-                    <BattleshipSetupBoard onBoardSetupCompleted={this.onBoardSetupCompleted} size={this.size} />
+                    <BattleshipSetupBoard onBoardSetupCompleted={this.onBoardSetupCompleted} size={this.size} gameCode={this.state.gameCode} />
                     <div />
                 </div>
             </div>
@@ -238,7 +259,7 @@ class App extends React.Component {
                     <div>Battle to the death</div>
                 </header>
                 <div className='mainContent'>
-                    <ChessClock leftoverTime={this.state.leftoverTime} opponentLeftoverTime={this.state.opponentLeftoverTime} lastTimeSync={this.state.lastTimeSync} turn={this.state.chess.turn()} color={this.state.color} />
+                    <ChessClock leftoverTime={this.state.leftoverTime} opponentLeftoverTime={this.state.opponentLeftoverTime} lastTimeSync={this.state.lastTimeSync} turn={this.state.chess.turn()} color={this.state.color} onTimeOut={this.onTimeOut} />
                     <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} size={this.size} color={this.state.color} lastMove={this.state.lastMove} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} />
                     <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} lastMove={this.state.lastMove} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} />
                 </div>
@@ -263,7 +284,7 @@ class App extends React.Component {
                     <div>Game Over</div>
                 </header>
                 <div className='mainContent faded disabled'>
-                    <ChessClock leftoverTime={this.state.leftoverTime} opponentLeftoverTime={this.state.opponentLeftoverTime} lastTimeSync={this.state.lastTimeSync} turn={null} color={this.state.color} />
+                    <ChessClock leftoverTime={this.state.leftoverTime} opponentLeftoverTime={this.state.opponentLeftoverTime} lastTimeSync={this.state.lastTimeSync} turn={null} color={this.state.color} onTimeOut={this.onTimeOut} />
                     <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} size={this.size} color={this.state.color} lastMove={this.state.lastMove} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} />
                     <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} lastMove={this.state.lastMove} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} />
                 </div>
@@ -275,10 +296,8 @@ class App extends React.Component {
         );
     }
 
-    render() {
-        if (this.state.gameState === this.states.setup) {
-            return this.renderBoardSetup();
-        } else if (this.state.gameState === this.states.waiting_for_opponent) {
+    renderWaitingForOpponent() {
+        if (!this.state.gameCode) {
             return (
                 <div className="App">
                     <header className="App-header">
@@ -289,6 +308,27 @@ class App extends React.Component {
                     </div>
                 </div>
             );
+        } else {
+            let url = "http://157.230.120.142/battlechess?game=" + this.state.gameCode;
+            return (
+                <div className="App">
+                    <header className="App-header">
+                        <div>Waiting for opponent</div>
+                    </header>
+                    <div className='mainContent waitingForOpponent'>
+                        Copy this and share it with a friend to play <br />
+                        {url}
+                    </div>
+                </div>
+            );
+        }
+    }
+
+    render() {
+        if (this.state.gameState === this.states.setup) {
+            return this.renderBoardSetup();
+        } else if (this.state.gameState === this.states.waiting_for_opponent) {
+            return this.renderWaitingForOpponent();
         } else if (this.state.gameState === this.states.game_over) {
             return this.renderGameOver();
         }

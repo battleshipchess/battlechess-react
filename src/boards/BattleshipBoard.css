@@ -70,26 +70,26 @@
     height: 100%;
 }
 
-.shipOverlay[data-content="."],
+.shipOverlay[data-content="x"],
 .shipOverlay[data-content="i"] {
     background-image: url('./png/shot.png');
     background-size: cover;
     opacity: .8;
 }
 
-.shipOverlay[data-content="x"] {
+.shipOverlay[data-content="+"] {
     background-color: var(--primary-hit-color-accent);
     border: 2px solid black;
     box-sizing: border-box;
 }
 
-.shipOverlay[data-content="+"] {
+.shipOverlay[data-content="s"] {
     background-color: var(--primary-ship-color-accent);
     border: 2px solid black;
     box-sizing: border-box;
 }
 
-.shipOverlay[data-content="-"] {
+.shipOverlay[data-content="#"] {
     background-color: var(--primary-sunk-color-accent);
     border: 2px solid black;
     box-sizing: border-box;
