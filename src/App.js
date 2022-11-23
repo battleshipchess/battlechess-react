@@ -73,7 +73,7 @@ class App extends React.Component {
                 gameCode: gameCode
             });
         }
-        const ws = new WebSocket(`ws://${process.env.REACT_APP_WS_HOST}:${process.env.REACT_APP_WS_PORT}`);
+        const ws = new WebSocket(`wss://${process.env.REACT_APP_WS_HOST}:${process.env.REACT_APP_WS_PORT}`);
         ws.addEventListener('message', this.handleMessage);
         ws.addEventListener('open', () => {
             ws.send(JSON.stringify({
@@ -309,7 +309,7 @@ class App extends React.Component {
                 </div>
             );
         } else {
-            let url = "http://157.230.120.142/battlechess?game=" + this.state.gameCode;
+            let url = "https://battlechess.club/?game=" + this.state.gameCode;
             return (
                 <div className="App">
                     <header className="App-header">
