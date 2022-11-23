@@ -24,4 +24,5 @@ code {
 
     --last-move-color: rgba(155, 199, 0, 0.41);
     --selected-color: rgba(20,85,30,0.5);
+    --in-check-color: rgba(255, 55, 55, 0.7);
 }

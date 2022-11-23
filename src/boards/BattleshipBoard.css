@@ -157,6 +157,14 @@
     box-sizing: border-box;
 }
 
+.inCheck {
+    position: absolute;
+    background: radial-gradient(ellipse at center, red 0%, #e70000 25%, rgba(169, 0, 0, 0) 89%, rgba(158, 0, 0, 0) 100%);
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
 .selectedPiece {
     position: absolute;
     background-color: var(--selected-color);

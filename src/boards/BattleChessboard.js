@@ -72,6 +72,18 @@ function lastMoveHighlight(x, y, props) {
     return (<div />);
 }
 
+function checkHighlight(x, y, props) {
+    if (props.color === 'b') {
+        x = props.size - x - 1;
+        y = props.size - y - 1;
+    }
+    let piece = props.chess.get(square(x, y));
+    if (props.chess.chess.inCheck() && piece.type === 'k' && piece.color === props.chess.turn()) {
+        return (<div className="inCheck" />);
+    }
+    return (<div />);
+}
+
 function selectedPieceHighlight(x, y, props) {
     if (props.color === 'b') {
         x = props.size - x - 1;
@@ -157,6 +169,7 @@ function BattleChessboard(props) {
                             {lastMoveHighlight(colIdx, rowIdx, props)}
                             {shipOverlay(getContent(props, colIdx, rowIdx))}
                             {selectedPieceHighlight(colIdx, rowIdx, props)}
+                            {checkHighlight(colIdx, rowIdx, props)}
                             {pieceOverlay(props, colIdx, rowIdx, selectPiece)}
                         </div>
                     )).flat()}
