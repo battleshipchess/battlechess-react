@@ -228,7 +228,7 @@ class App extends React.Component {
 
     resetGame() {
         Cookies.set("playerId", this.randomId());
-        window.location.reload();
+        window.location = window.location.href.split("?")[0];
     }
 
     onTimeOut() {
@@ -290,7 +290,7 @@ class App extends React.Component {
                 </div>
                 {this.renderWinner()}
                 <div style={{ display: "flex", justifyContent: "center" }}>
-                    <input type="button" data-type="primary" value="PLAY AGAIN" onClick={this.resetGame} />
+                    <input type="button" data-type="primary" value="NEW GAME" onClick={this.resetGame} />
                 </div>
             </div>
         );

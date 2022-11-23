@@ -61,10 +61,10 @@ class BattleshipSetupBoard extends React.Component {
         ships.forEach(ship => {
             let done = false;
             let newPosition = {};
-            while(!done) {
+            while (!done) {
                 newPosition.x = Math.floor(Math.random() * this.props.size);
                 newPosition.y = Math.floor(Math.random() * this.props.size);
-                if(Math.random() < .5) {
+                if (Math.random() < .5) {
                     newPosition.width = ship.position.width;
                     newPosition.height = ship.position.height;
                 } else {
@@ -210,6 +210,25 @@ class BattleshipSetupBoard extends React.Component {
         this.props.onBoardSetupCompleted(this.state.ships, gameCode);
     }
 
+    renderStartGameButtons() {
+        if (this.isFullyPlaced() && !this.props.gameCode) {
+            return [
+                <input type="button" data-type="primary" value="START GAME" onClick={this.startGame} />,
+                <input type="button" data-type="primary" value="START PRIVATE GAME" onClick={this.startPrivateGame} />]
+        } else if (this.isFullyPlaced() && this.props.gameCode) {
+            return <input type="button" data-type="primary" value="JOIN GAME" onClick={this.startGame} />
+        }
+
+        if (!this.props.gameCode) {
+            return [
+                <input type="button" data-type="disabled" value="START GAME" />,
+                <input type="button" data-type="disabled" value="START PRIVATE GAME" />
+            ];
+        }
+        return <input type="button" data-type="disabled" value="JOIN GAME" />
+
+    }
+
     shipyard() {
         return (<div className="shipyard">
             {this.ships.map((shipType, shipTypeIdx) => {
@@ -230,16 +249,7 @@ class BattleshipSetupBoard extends React.Component {
                 </div>
             }
             )}
-            {
-                this.isFullyPlaced() ?
-                <input type="button" data-type="primary" value="START GAME" onClick={this.startGame} /> :
-                <input type="button" data-type="disabled" value="START GAME" />
-            }
-            {
-                this.isFullyPlaced() ?
-                <input type="button" data-type="primary" value="START PRIVATE GAME" onClick={this.startPrivateGame} /> :
-                <input type="button" data-type="disabled" value="START PRIVATE GAME" />
-            }
+            {this.renderStartGameButtons()}
             <input type="button" value="Randomize" onClick={this.randomizeShips} />
         </div>)
     }
