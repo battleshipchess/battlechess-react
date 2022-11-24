@@ -60,6 +60,7 @@ class App extends React.Component {
         this.handleMessage = this.handleMessage.bind(this);
         this.onBoardSetupCompleted = this.onBoardSetupCompleted.bind(this);
         this.resetGame = this.resetGame.bind(this);
+        this.resign = this.resign.bind(this);
         this.selectPiece = this.selectPiece.bind(this);
         this.deselectPiece = this.deselectPiece.bind(this);
         this.onTimeOut = this.onTimeOut.bind(this);
@@ -230,13 +231,20 @@ class App extends React.Component {
 
     resetGame() {
         Cookies.set("playerId", this.randomId());
-        if(this.state.ws) {
+        if (this.state.ws) {
             this.state.ws.send(JSON.stringify({
                 messageType: "ABORT",
                 playerId: this.state.playerId,
             }));
         }
         window.location = window.location.href.split("?")[0];
+    }
+
+    resign() {
+        this.state.ws.send(JSON.stringify({
+            messageType: "ABORT",
+            playerId: this.state.playerId,
+        }));
     }
 
     onTimeOut() {
@@ -264,12 +272,17 @@ class App extends React.Component {
         return (
             <div className="App">
                 <header className="App-header">
-                    <div>Battle to the death</div>
+                    <div>BattleChess</div>
                 </header>
                 <div className='mainContent'>
                     <ChessClock leftoverTime={this.state.leftoverTime} opponentLeftoverTime={this.state.opponentLeftoverTime} lastTimeSync={this.state.lastTimeSync} turn={this.state.chess.turn()} color={this.state.color} onTimeOut={this.onTimeOut} isOpponentLive={this.state.isOpponentLive} />
                     <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} size={this.size} color={this.state.color} lastMove={this.state.lastMove} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} />
                     <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} lastMove={this.state.lastMove} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} />
+                </div>
+                <div className='mainContentVertical'>
+                    <div style={{ display: "flex", justifyContent: "center" }}>
+                        <input type="button" data-type="primary" value="RESIGN" onClick={this.resign} />
+                    </div>
                 </div>
             </div>
         );
@@ -296,9 +309,11 @@ class App extends React.Component {
                     <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} size={this.size} color={this.state.color} lastMove={this.state.lastMove} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} />
                     <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} lastMove={this.state.lastMove} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} />
                 </div>
-                {this.renderWinner()}
-                <div style={{ display: "flex", justifyContent: "center" }}>
-                    <input type="button" data-type="primary" value="NEW GAME" onClick={this.resetGame} />
+                <div className='mainContentVertical'>
+                    {this.renderWinner()}
+                    <div style={{ display: "flex", justifyContent: "center" }}>
+                        <input type="button" data-type="primary" value="NEW GAME" onClick={this.resetGame} />
+                    </div>
                 </div>
             </div>
         );
