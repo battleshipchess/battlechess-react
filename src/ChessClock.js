@@ -75,8 +75,14 @@ class ChessClock extends React.Component {
         } else if (this.props.turn !== null) {
             opponentClass = "ticking";
         }
+
+        let liveIndicator = <div className="player_live" />;
+        if (!this.props.isOpponentLive) {
+            liveIndicator = <div className="player_offline" />;
+        }
+
         return (<div className="chess_clock">
-            <div><div>Opponent</div><div id="opponent_time" className={opponentClass}>{this.state.opponentTime}</div></div>
+            <div><div>Opponent</div><div id="opponent_time" className={opponentClass}>{liveIndicator}{this.state.opponentTime}</div></div>
             <div><div>You</div><div id="own_time" className={playerClass}>{this.state.playerTime}</div></div>
         </div>);
     }

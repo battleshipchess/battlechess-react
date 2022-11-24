@@ -73,7 +73,7 @@ class App extends React.Component {
                 gameCode: gameCode
             });
         }
-        const ws = new WebSocket(`wss://${process.env.REACT_APP_WS_HOST}:${process.env.REACT_APP_WS_PORT}`);
+        const ws = new WebSocket(`ws${process.env.NODE_ENV === 'development' ? '' : 's'}://${process.env.REACT_APP_WS_HOST}:${process.env.REACT_APP_WS_PORT}`);
         ws.addEventListener('message', this.handleMessage);
         ws.addEventListener('open', () => {
             ws.send(JSON.stringify({
@@ -137,6 +137,7 @@ class App extends React.Component {
                 opponentLeftoverTime: data.opponentLeftoverTime,
                 lastTimeSync: Date.now(),
                 lastMove: data.lastMove,
+                isOpponentLive: data.isOpponentLive,
             })
         } else {
             this.playSound(data.lastAction);
@@ -156,6 +157,7 @@ class App extends React.Component {
                 opponentLeftoverTime: data.opponentLeftoverTime,
                 lastTimeSync: Date.now(),
                 lastMove: data.lastMove,
+                isOpponentLive: data.isOpponentLive,
             })
         }
     }
@@ -259,7 +261,7 @@ class App extends React.Component {
                     <div>Battle to the death</div>
                 </header>
                 <div className='mainContent'>
-                    <ChessClock leftoverTime={this.state.leftoverTime} opponentLeftoverTime={this.state.opponentLeftoverTime} lastTimeSync={this.state.lastTimeSync} turn={this.state.chess.turn()} color={this.state.color} onTimeOut={this.onTimeOut} />
+                    <ChessClock leftoverTime={this.state.leftoverTime} opponentLeftoverTime={this.state.opponentLeftoverTime} lastTimeSync={this.state.lastTimeSync} turn={this.state.chess.turn()} color={this.state.color} onTimeOut={this.onTimeOut} isOpponentLive={this.state.isOpponentLive} />
                     <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} size={this.size} color={this.state.color} lastMove={this.state.lastMove} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} />
                     <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} lastMove={this.state.lastMove} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} />
                 </div>
@@ -284,7 +286,7 @@ class App extends React.Component {
                     <div>Game Over</div>
                 </header>
                 <div className='mainContent faded disabled'>
-                    <ChessClock leftoverTime={this.state.leftoverTime} opponentLeftoverTime={this.state.opponentLeftoverTime} lastTimeSync={this.state.lastTimeSync} turn={null} color={this.state.color} onTimeOut={this.onTimeOut} />
+                    <ChessClock leftoverTime={this.state.leftoverTime} opponentLeftoverTime={this.state.opponentLeftoverTime} lastTimeSync={this.state.lastTimeSync} turn={null} color={this.state.color} onTimeOut={this.onTimeOut} isOpponentLive={this.state.isOpponentLive} />
                     <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} size={this.size} color={this.state.color} lastMove={this.state.lastMove} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} />
                     <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} lastMove={this.state.lastMove} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} />
                 </div>
@@ -306,6 +308,10 @@ class App extends React.Component {
                     <div className='mainContent waitingForOpponent'>
                         You will be paired with the next person to start a game
                     </div>
+                    <div className="loadingIcon"></div>
+                    <div style={{ display: "flex", justifyContent: "center" }}>
+                        <input type="button" data-type="primary" value="ABORT" onClick={this.resetGame} />
+                    </div>
                 </div>
             );
         } else {
@@ -318,6 +324,10 @@ class App extends React.Component {
                     <div className='mainContent waitingForOpponent'>
                         Copy this and share it with a friend to play <br />
                         {url}
+                    </div>
+                    <div className="loadingIcon"></div>
+                    <div style={{ display: "flex", justifyContent: "center" }}>
+                        <input type="button" data-type="primary" value="ABORT" onClick={this.resetGame} />
                     </div>
                 </div>
             );

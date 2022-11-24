@@ -151,12 +151,15 @@ function BattleChessboard(props) {
             props.deselectPiece();
         }
 
+        let curBoardRef = boardRef.current;
         if (boardRef.current) {
             boardRef.current.addEventListener('contextmenu', deselectPiece);
         }
 
         return () => {
-            boardRef.current.removeEventListener('contextmenu', deselectPiece);
+            if (curBoardRef) {
+                curBoardRef.removeEventListener('contextmenu', deselectPiece);
+            }
         }
     });
 

@@ -213,16 +213,16 @@ class BattleshipSetupBoard extends React.Component {
     renderStartGameButtons() {
         if (this.isFullyPlaced() && !this.props.gameCode) {
             return [
-                <input type="button" data-type="primary" value="START GAME" onClick={this.startGame} />,
-                <input type="button" data-type="primary" value="START PRIVATE GAME" onClick={this.startPrivateGame} />]
+                <input type="button" data-type="primary" value="START GAME" onClick={this.startGame} key="start" />,
+                <input type="button" data-type="primary" value="START PRIVATE GAME" onClick={this.startPrivateGame} key="startprivate" />]
         } else if (this.isFullyPlaced() && this.props.gameCode) {
             return <input type="button" data-type="primary" value="JOIN GAME" onClick={this.startGame} />
         }
 
         if (!this.props.gameCode) {
             return [
-                <input type="button" data-type="disabled" value="START GAME" />,
-                <input type="button" data-type="disabled" value="START PRIVATE GAME" />
+                <input type="button" data-type="disabled" value="START GAME" key="start" />,
+                <input type="button" data-type="disabled" value="START PRIVATE GAME" key="private" />
             ];
         }
         return <input type="button" data-type="disabled" value="JOIN GAME" />

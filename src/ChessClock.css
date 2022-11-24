@@ -31,3 +31,23 @@
 .chess_clock>div>div.ticking {
     color: black;
 }
+
+.player_live {
+    width: .6em;
+    height: .6em;
+    border-radius: 100%;
+    background-color: green;
+    box-sizing: border-box;
+    display: inline-block;
+    margin-right: .25em;
+}
+
+.player_offline {
+    width: .6em;
+    height: .6em;
+    border-radius: 100%;
+    box-sizing: border-box;
+    border: .2em solid gray;
+    display: inline-block;
+    margin-right: .25em;
+}
