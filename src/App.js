@@ -230,6 +230,12 @@ class App extends React.Component {
 
     resetGame() {
         Cookies.set("playerId", this.randomId());
+        if(this.state.ws) {
+            this.state.ws.send(JSON.stringify({
+                messageType: "ABORT",
+                playerId: this.state.playerId,
+            }));
+        }
         window.location = window.location.href.split("?")[0];
     }
 
@@ -305,11 +311,9 @@ class App extends React.Component {
                     <header className="App-header">
                         <div>Waiting for opponent</div>
                     </header>
-                    <div className='mainContent waitingForOpponent'>
+                    <div className='mainContentVertical waitingForOpponent'>
                         You will be paired with the next person to start a game
-                    </div>
-                    <div className="loadingIcon"></div>
-                    <div style={{ display: "flex", justifyContent: "center" }}>
+                        <div className="battlechessIcon loading"></div>
                         <input type="button" data-type="primary" value="ABORT" onClick={this.resetGame} />
                     </div>
                 </div>

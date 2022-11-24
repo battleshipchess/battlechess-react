@@ -6,6 +6,14 @@
     padding: 1em;
 }
 
+.mainContentVertical {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1em;
+    padding: 1em;
+}
+
 .App-header {
     padding: 1em;
     background-color: var(--primary-color);
@@ -76,8 +84,39 @@ input[type="button"][data-type="disabled"] {
     text-align: center;
 }
 
-.loadingIcon {
+.battlechessIcon {
     background-image: url('./loading_icon.png');
-    width: 50px;
-    height: 50px;
+    background-size: contain;
+    width: 5em;
+    height: 5em;
+    position: relative;
+}
+.battlechessIcon::after {
+    content: '';
+    background-image: url('./icon_1024.png');
+    background-size: contain;
+    width: 5em;
+    height: 5em;
+    position: absolute;
+    margin: auto;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+.loading {
+    animation: loadingIconRotation 8s infinite linear;
+}
+.loading::after {
+    animation: loadingIconRotation 8s infinite reverse linear;
+}
+
+@keyframes loadingIconRotation {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(359deg);
+    }
 }
