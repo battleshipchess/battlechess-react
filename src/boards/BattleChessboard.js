@@ -14,10 +14,6 @@ function square(x, y) {
     return `${alphabet[x]}${8 - y}`
 }
 
-function squareColor(x, y) {
-    return ["light", "dark"][(x + y) % 2];
-}
-
 function onChessPieceDragStart(event, props) {
     let pieceDiv = event.target.closest(".chessPieceOverlay");
     if (!pieceDiv) {
@@ -90,7 +86,7 @@ function selectedPieceHighlight(x, y, props) {
         y = props.size - y - 1;
     }
     if (props.selectedPiece) {
-        if (props.selectedPiece.x == x && props.selectedPiece.y == y) {
+        if (props.selectedPiece.x === x && props.selectedPiece.y === y) {
             return (<div className="selectedPiece" />);
         }
         let squareName = square(props.selectedPiece.x, props.selectedPiece.y);
