@@ -1,0 +1,19 @@
+.gameFooter {
+    display: flex;
+    justify-content: center;
+    padding-inline: 1em;
+}
+
+.gameFooter>div {
+    border-top: 1px solid black;
+    display: flex;
+    max-width: 800px;
+    flex-direction: column;
+    gap: 1em;
+    padding-block: 1em;
+}
+
+.footerColumn>div:first-child {
+    font-size: 1.15em;
+    font-weight: bold;
+}

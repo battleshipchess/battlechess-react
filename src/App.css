@@ -91,6 +91,7 @@ input[type="button"][data-type="disabled"] {
     height: 5em;
     position: relative;
 }
+
 .battlechessIcon::after {
     content: '';
     background-image: url('./icon_1024.png');
@@ -104,9 +105,11 @@ input[type="button"][data-type="disabled"] {
     right: 0;
     bottom: 0;
 }
+
 .loading {
     animation: loadingIconRotation 8s infinite linear;
 }
+
 .loading::after {
     animation: loadingIconRotation 8s infinite reverse linear;
 }
@@ -118,5 +121,64 @@ input[type="button"][data-type="disabled"] {
 
     to {
         transform: rotate(359deg);
+    }
+}
+
+.inline-img {
+    height: 1.5em;
+    vertical-align: bottom;
+    display: inline;
+}
+
+.shareURL {
+    display: flex;
+    gap: .5em;
+    align-items: center;
+}
+
+.shareURL> :nth-child(2) {
+    border: 3px solid black;
+    border-radius: .25em;
+    padding: .25em;
+}
+
+.copied {
+    position: relative;
+}
+
+.copied::after {
+    content: 'copied';
+
+    position: absolute;
+    right: 0;
+    bottom: 0;
+
+    padding: .125rem;
+    font-size: 1rem;
+
+    color: white;
+    background-color: black;
+
+    border: 2px solid black;
+    border-radius: .25rem;
+
+    animation: copyFadeOut 2s forwards;
+}
+
+@keyframes copyFadeOut {
+    0% {
+        opacity: 0;
+    }
+
+    5% {
+        opacity: 1;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
     }
 }

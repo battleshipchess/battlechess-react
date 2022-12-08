@@ -10,6 +10,7 @@ import UIfx from 'uifx';
 import missSoundFile from './sounds/splash-by-blaukreuz-6261.mp3';
 import hitSoundFile from './sounds/9mm-pistol-shoot-short-reverb-7152.mp3';
 import sinkSoundFile from './sounds/cannon-shot-6153-cropped.mp3';
+import GameFooter from './GameFooter';
 class App extends React.Component {
 
     constructor(props) {
@@ -118,6 +119,7 @@ class App extends React.Component {
         if (data.messageType === "UPDATE_STATE" && data.state === "WAITING_FOR_OPPONENT") {
             this.setState({
                 gameState: this.states.waiting_for_opponent,
+                gameCode: data.gameCode,
             })
         } else if (data.messageType === "UPDATE_STATE" && data.state === "IDLE") {
             this.setState({
@@ -254,6 +256,15 @@ class App extends React.Component {
         }))
     }
 
+    copyToClipboard(text, event) {
+        navigator.clipboard.writeText(text);
+
+        let indicatorTarget = event.target.closest(".shareURL");
+        indicatorTarget.classList.remove("copied");
+        indicatorTarget.classList.add("copied");
+        setTimeout(() => indicatorTarget.classList.remove("copied"), 2000);
+    }
+
     renderBoardSetup() {
         return (
             <div className="App">
@@ -264,6 +275,7 @@ class App extends React.Component {
                     <BattleshipSetupBoard onBoardSetupCompleted={this.onBoardSetupCompleted} size={this.size} gameCode={this.state.gameCode} />
                     <div />
                 </div>
+                <GameFooter />
             </div>
         );
     }
@@ -331,6 +343,7 @@ class App extends React.Component {
                         <div className="battlechessIcon loading"></div>
                         <input type="button" data-type="primary" value="ABORT" onClick={this.resetGame} />
                     </div>
+                    <GameFooter />
                 </div>
             );
         } else {
@@ -340,15 +353,21 @@ class App extends React.Component {
                     <header className="App-header">
                         <div>Waiting for opponent</div>
                     </header>
-                    <div className='mainContent waitingForOpponent'>
-                        Copy this and share it with a friend to play <br />
-                        {url}
-                    </div>
-                    <div className="loadingIcon"></div>
-                    <div style={{ display: "flex", justifyContent: "center" }}>
+                    <div className='mainContentVertical waitingForOpponent'>
+                        <div className="shareURL">
+                            <div style={{ cursor: 'pointer' }} onClick={(event) => this.copyToClipboard(url, event)}>
+                                <img src={process.env.PUBLIC_URL + '/copyicon.svg'} className="inline-img" alt="copy to clipboard" />
+                            </div>
+                            <div>
+                                {url}
+                            </div>
+                        </div>
+                        Invite a friend to play by copying the URL
+                        <div className="battlechessIcon loading"></div>
                         <input type="button" data-type="primary" value="ABORT" onClick={this.resetGame} />
                     </div>
-                </div>
+                    <GameFooter />
+                </div >
             );
         }
     }
