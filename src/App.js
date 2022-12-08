@@ -11,6 +11,12 @@ import missSoundFile from './sounds/splash-by-blaukreuz-6261.mp3';
 import hitSoundFile from './sounds/9mm-pistol-shoot-short-reverb-7152.mp3';
 import sinkSoundFile from './sounds/cannon-shot-6153-cropped.mp3';
 import GameFooter from './GameFooter';
+
+const GAME_OVER_CHESS = "chess";
+const GAME_OVER_BATTLESHIP = "battleship";
+const GAME_OVER_TIME_OUT = "timeout";
+const GAME_OVER_RESIGN = "resign";
+
 class App extends React.Component {
 
     constructor(props) {
@@ -301,13 +307,35 @@ class App extends React.Component {
     }
 
     renderWinner() {
+        const gameOverMessages = {
+            win: {
+                default: ['Congratulations! You Won!'],
+            },
+            loss: {
+                default: ['Looks like you lost. Better luck next time!'],
+            }
+        }
+        gameOverMessages.win[GAME_OVER_CHESS] = ['The king has been captured and your opponents fleet has scattered in fear! Looks like you\'ve won!'];
+        gameOverMessages.win[GAME_OVER_BATTLESHIP] = ['Your opponents fleet has been sunk! Well played captain!'];
+        gameOverMessages.win[GAME_OVER_TIME_OUT] = ['Looks like time has run out for your opponent. Well played!'];
+        gameOverMessages.win[GAME_OVER_RESIGN] = ['Looks like your opponent has fled the battle! Congratulations, you won!'];
+
+        gameOverMessages.loss[GAME_OVER_CHESS] = ['Your king has been captured by your opponent and your army has fled the battle. Better luck next time!'];
+        gameOverMessages.loss[GAME_OVER_BATTLESHIP] = ['Your last ship has been sunk! The battle has been lost, but the war is far from over.'];
+        gameOverMessages.loss[GAME_OVER_TIME_OUT] = ['Hesitation is the enemy of opportunity. Looks like time has run out this time!'];
+        gameOverMessages.loss[GAME_OVER_RESIGN] = ['A good general knows when a battle is lost! Time to regroup and continue the fight!'];
+
         if (this.state.winner === null) {
             return <div className="game_result">It's a DRAW. Time for a rematch</div>
-        } else if (this.state.winner === this.state.color) {
-            return <div className="game_result">Congratulations! You Won!</div>
-        } else {
-            return <div className="game_result">Looks like you lost. Better luck next time!</div>
         }
+        let winState = this.state.winner === this.state.color ? "win" : "loss";
+        let messageOptions = gameOverMessages[winState][this.state.winCondition];
+        if (messageOptions == null || messageOptions.length === 0) {
+            messageOptions = gameOverMessages[winState].default;
+        }
+
+        let messageIdx = Math.floor(Math.random() * messageOptions.length);
+        return <div className="game_result">{messageOptions[messageIdx]}</div>
     }
 
     renderGameOver() {
@@ -327,6 +355,7 @@ class App extends React.Component {
                         <input type="button" data-type="primary" value="NEW GAME" onClick={this.resetGame} />
                     </div>
                 </div>
+                <GameFooter />
             </div>
         );
     }
