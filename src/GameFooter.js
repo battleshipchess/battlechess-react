@@ -9,7 +9,7 @@ function GameFooter() {
                         How to play
                     </div>
                     <div>
-                        You've heard of chess? And you know all about battleship? Then let me introduce you to BattleChess™! You shoot where you move. That's it. Try not to lose!
+                        You've heard of chess? And you know all about battleship? Then let me introduce you to BattleChess™! You shoot where you move. You keep moving until you miss. That's it. Try not to lose!
                     </div>
                 </div>
                 <div className='footerColumn'>
@@ -21,7 +21,7 @@ function GameFooter() {
                         CS Student who likes chess
                     </div>
                     <div>
-                    💸 <a href='https://www.paypal.com/donate/?hosted_button_id=KTEHDA54Q7CGW'>Support the project</a>
+                        💸 <a href='https://www.paypal.com/donate/?hosted_button_id=KTEHDA54Q7CGW'>Support the project</a>
                     </div>
                 </div>
             </div>
