@@ -101,23 +101,16 @@ class App extends React.Component {
         return dateString + randomness;
     }
 
-    playSound(lastAction) {
-        const missSound = new UIfx(missSoundFile, { volume: .3 });
-        const hitSound = new UIfx(hitSoundFile, { volume: .3 });
-        const sinkSound = new UIfx(sinkSoundFile, { volume: .3 });
-        console.log(lastAction);
-        switch (lastAction) {
-            case this.boardStates.hit:
-                hitSound.play();
-                break;
-            case this.boardStates.shot:
-                missSound.play();
-                break;
-            case this.boardStates.sunk:
-                sinkSound.play();
-                break;
-            default:
-                break;
+    playSound(move) {
+        if(move.sunk) {
+            const sinkSound = new UIfx(sinkSoundFile, { volume: .3 });
+            sinkSound.play();
+        } else if (move.hit) {
+            const hitSound = new UIfx(hitSoundFile, { volume: .3 });
+            hitSound.play();
+        } else {
+            const missSound = new UIfx(missSoundFile, { volume: .3 });
+            missSound.play();
         }
     }
 
@@ -150,7 +143,9 @@ class App extends React.Component {
                 isOpponentLive: data.isOpponentLive,
             })
         } else {
-            this.playSound(data.lastAction);
+            if (data.moveHistory.length > 0) {
+                this.playSound(data.moveHistory[data.moveHistory.length - 1]);
+            }
             let chess = new Battlechess();
             chess.loadMoveHistory(data.moveHistory);
             let gameState = this.states.making_move;

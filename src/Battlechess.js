@@ -19,7 +19,7 @@ function swap_color(c) {
 // ----------------
 
 class Move {
-    constructor({ color, from, to, flags, piece, san }, hit) {
+    constructor({ color, from, to, flags, piece, san }, hit, sunk) {
         this.color = color;
         this.from = from;
         this.to = to;
@@ -27,6 +27,7 @@ class Move {
         this.piece = piece;
         this.san = san;
         this.hit = hit;
+        this.sunk = sunk;
     }
 }
 
@@ -37,15 +38,35 @@ class Battlechess {
         this.moveHistory = [];
     }
 
+    gameNotation() {
+        let notation = '1. ';
+        let moveNumber = 1;
+        this.moveHistory.forEach(move => {
+            notation += move.san;
+            if(move.sunk) {
+                notation += '↓';
+            } else if(move.hit) {
+                notation += '.';
+            } else {
+                notation += ' ';
+                if(move.color === BLACK) {
+                    moveNumber++;
+                    notation += moveNumber + '. '
+                }
+            }
+        });
+        return notation;
+    }
+
     loadMoveHistory(moveHistory) {
         this.chess = new Chess(this.initialFen);
         this.moveHistory = [];
         moveHistory.forEach(move => {
-            this.move(move.from, move.to, move.hit);
+            this.move(move.from, move.to, move.hit, move.sunk);
         })
     }
 
-    move(from, to, hit) {
+    move(from, to, hit, sunk) {
         let newMove = this.chess.move({
             from: from,
             to: to
@@ -62,7 +83,7 @@ class Battlechess {
             return;
         }
 
-        this.moveHistory.push(new Move(newMove, hit));
+        this.moveHistory.push(new Move(newMove, hit, sunk));
 
         if (hit) {
             let newFen = this.chess.fen().split(" ");
@@ -78,6 +99,10 @@ class Battlechess {
 
     turn() {
         return this.chess.turn();
+    }
+
+    notTurn() {
+        return swap_color(this.chess.turn());
     }
 
     get(square) {
