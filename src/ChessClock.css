@@ -19,18 +19,30 @@
     }
 }
 
-.chess_clock>div>div:nth-child(1) {
+.chess_clock>div>div>div {
     font-weight: bold;
 }
 
-.chess_clock>div>div:nth-child(2) {
+.chess_clock>div>div>div:nth-child(2) {
     font-weight: bold;
     color: rgb(128, 128, 128);
 }
 
-.chess_clock>div>div.ticking {
+.chess_clock>div>div>div.ticking {
     color: black;
 }
+
+.chess_clock>div {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+@media only screen and (min-width: 600px) {
+    .chess_clock>div {
+        flex-direction: column;
+    }
+}
+
 
 .player_live {
     width: .6em;
@@ -50,4 +62,58 @@
     border: .2em solid gray;
     display: inline-block;
     margin-right: .25em;
+}
+
+.turn_indicator::after {
+    content: "←";
+    font-size: 2.5em;
+    opacity: 0;
+    animation: arrowFadeIn .5s forwards;
+    padding-inline: 1rem;
+}
+
+.opponent_turn_indicator::after {
+    content: "→";
+    font-size: 2.5em;
+    opacity: 0;
+    animation: arrowFadeIn .5s forwards;
+    padding-inline: 1rem;
+}
+
+@media only screen and (min-width: 600px) {
+    .turn_indicator::after {
+        content: "↓";
+        transform: translate(30%);
+        position: absolute;
+        right: 0px;
+        bottom: 0px;
+    }
+    .opponent_turn_indicator::after {
+        content: "↑";
+        transform: translate(30%);
+        position: absolute;
+        right: 0px;
+        top: 0px;
+    }
+
+    .turn_indicator {
+        position: relative;
+    }
+    .opponent_turn_indicator {
+        position: relative;
+    }
+}
+
+@keyframes arrowFadeIn {
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+
+.hidden {
+    display: none;
 }

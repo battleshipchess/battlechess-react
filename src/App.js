@@ -54,7 +54,7 @@ class App extends React.Component {
         }
 
         if (!Cookies.get("playerId")) {
-            Cookies.set("playerId", this.randomId(), {expires: 7});
+            Cookies.set("playerId", this.randomId(), { expires: 7 });
         }
 
         this.state = {
@@ -102,7 +102,7 @@ class App extends React.Component {
     }
 
     playSound(move) {
-        if(move.sunk) {
+        if (move.sunk) {
             const sinkSound = new UIfx(sinkSoundFile, { volume: .3 });
             sinkSound.play();
         } else if (move.hit) {
@@ -234,7 +234,7 @@ class App extends React.Component {
     }
 
     resetGame() {
-        Cookies.set("playerId", this.randomId(), {expires: 7});
+        Cookies.set("playerId", this.randomId(), { expires: 7 });
         if (this.state.ws) {
             this.state.ws.send(JSON.stringify({
                 messageType: "ABORT",

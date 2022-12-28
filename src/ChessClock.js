@@ -70,10 +70,13 @@ class ChessClock extends React.Component {
     render() {
         let opponentClass = "";
         let playerClass = "";
+        let turn_indicator = [];
         if (this.props.turn !== null && this.props.turn === this.props.color) {
             playerClass = "ticking";
+            turn_indicator = ["hidden", "turn_indicator"];
         } else if (this.props.turn !== null) {
             opponentClass = "ticking";
+            turn_indicator = ["opponent_turn_indicator", "hidden"];
         }
 
         let liveIndicator = <div className="player_live" />;
@@ -81,9 +84,24 @@ class ChessClock extends React.Component {
             liveIndicator = <div className="player_offline" />;
         }
 
+
         return (<div className="chess_clock">
-            <div><div>Opponent</div><div id="opponent_time" className={opponentClass}>{liveIndicator}{this.state.opponentTime}</div></div>
-            <div><div>You</div><div id="own_time" className={playerClass}>{this.state.playerTime}</div></div>
+            <div>
+                <div />
+                <div>
+                    <div>Opponent</div>
+                    <div id="opponent_time" className={opponentClass}>{liveIndicator}{this.state.opponentTime}</div>
+                </div>
+                <div className={turn_indicator[0]} />
+            </div>
+            <div>
+                <div className={turn_indicator[1]} />
+                <div>
+                    <div>You</div>
+                    <div id="own_time" className={playerClass}>{this.state.playerTime}</div>
+                </div>
+                <div />
+            </div>
         </div>);
     }
 }
