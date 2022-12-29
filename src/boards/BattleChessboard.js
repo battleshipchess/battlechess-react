@@ -90,7 +90,7 @@ function selectedPieceHighlight(x, y, props) {
             return (<div className="selectedPiece" />);
         }
         let squareName = square(props.selectedPiece.x, props.selectedPiece.y);
-        let moveOptions = props.chess.chess.moves({ square: squareName, verbose: true });
+        let moveOptions = props.chess.moves(squareName);
         moveOptions = moveOptions.map(move => move.to);
         if (moveOptions.includes(square(x, y))) {
             return (<div className="moveOption" />);

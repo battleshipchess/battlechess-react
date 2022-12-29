@@ -5,14 +5,31 @@ import { Chess } from "chess.js";
 
 const defaultFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-/**
- * PGN:
- * multiple consecutive moves of the same color are separated using ;
- * a move resulting in hitting a ship is denoted with *
- * a move resulting in sinking a ship is denoted with ~
- */
-
 // UTILITY FUNCTIONS
+/**
+ * Extracts the zero-based rank of an 0x88 square.
+ */
+function rank(square) {
+    return square >> 4
+}
+
+/**
+ * Extracts the zero-based file of an 0x88 square.
+ */
+function file(square) {
+    return square & 0xf
+}
+
+/**
+ * Converts a 0x88 square to algebraic notation.
+ */
+function algebraic(square) {
+    const f = file(square)
+    const r = rank(square)
+    return ('abcdefgh'.substring(f, f + 1) +
+        '87654321'.substring(r, r + 1))
+}
+
 function swap_color(c) {
     return c === WHITE ? BLACK : WHITE
 }
@@ -38,18 +55,24 @@ class Battlechess {
         this.moveHistory = [];
     }
 
+    /**
+     * PGN:
+     * multiple consecutive moves of the same color are separated using
+     * . if a ship was hit
+     * ↓ if a ship was sunk
+     */
     gameNotation() {
         let notation = '1. ';
         let moveNumber = 1;
         this.moveHistory.forEach(move => {
             notation += move.san;
-            if(move.sunk) {
+            if (move.sunk) {
                 notation += '↓';
-            } else if(move.hit) {
+            } else if (move.hit) {
                 notation += '.';
             } else {
                 notation += ' ';
-                if(move.color === BLACK) {
+                if (move.color === BLACK) {
                     moveNumber++;
                     notation += moveNumber + '. '
                 }
@@ -67,23 +90,27 @@ class Battlechess {
     }
 
     move(from, to, hit, sunk) {
-        let newMove = this.chess.move({
-            from: from,
-            to: to
-        });
-        if (!newMove) {
-            newMove = this.chess.move({
-                from: from,
-                to: to,
-                promotion: QUEEN
-            });
+        let moveObj = null
+        const moves = this.chess._moves({ legal: false, square: from })
+        for (let i = 0; i < moves.length; i++) {
+            if (
+                from === algebraic(moves[i].from) &&
+                to === algebraic(moves[i].to) &&
+                (!('promotion' in moves[i]) || moves[i].promotion === undefined || QUEEN === moves[i].promotion)
+            ) {
+                moveObj = moves[i]
+                break
+            }
         }
 
-        if (!newMove) {
-            return;
+        if (!moveObj) {
+            return null;
         }
 
-        this.moveHistory.push(new Move(newMove, hit, sunk));
+        const prettyMove = this.chess._makePretty(moveObj)
+
+        this.moveHistory.push(new Move(prettyMove, hit, sunk));
+        this.chess._makeMove(moveObj);
 
         if (hit) {
             let newFen = this.chess.fen().split(" ");
@@ -94,7 +121,7 @@ class Battlechess {
             this.chess = new Chess(newFen);
         }
 
-        return newMove;
+        return prettyMove
     }
 
     turn() {
@@ -109,8 +136,8 @@ class Battlechess {
         return this.chess.get(square);
     }
 
-    moves({ verbose, square, }) {
-        return this.chess.moves({ verbose, square, });
+    moves(square) {
+        return this.chess._moves({ legal: false, square }).map((move) => this.chess._makePretty(move));
     }
 }
 
