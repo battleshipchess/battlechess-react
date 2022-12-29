@@ -55,15 +55,9 @@ class Battlechess {
         this.moveHistory = [];
     }
 
-    /**
-     * PGN:
-     * multiple consecutive moves of the same color are separated using
-     * . if a ship was hit
-     * ↓ if a ship was sunk
-     */
-    gameNotation() {
-        let notation = '1. ';
-        let moveNumber = 1;
+    halfMoveNotation() {
+        let halfMoves = [];
+        let notation = '';
         this.moveHistory.forEach(move => {
             notation += move.san;
             if (move.sunk) {
@@ -71,14 +65,29 @@ class Battlechess {
             } else if (move.hit) {
                 notation += '.';
             } else {
-                notation += ' ';
-                if (move.color === BLACK) {
-                    moveNumber++;
-                    notation += moveNumber + '. '
-                }
+                halfMoves.push(notation);
+                notation = '';
             }
         });
-        return notation;
+        if(notation !== '') {
+            halfMoves.push(notation);
+        }
+        return halfMoves;
+    }
+
+    /**
+     * PGN:
+     * multiple consecutive moves of the same color are separated using
+     * . if a ship was hit
+     * ↓ if a ship was sunk
+     */
+    moveNotation() {
+        let halfMoves = this.halfMoveNotation();
+        let moves = [];
+        for(let halfMoveNumber = 0; halfMoveNumber < halfMoves.length; halfMoveNumber += 2) {
+            moves.push(((halfMoveNumber / 2) + 1) + '. ' + [halfMoves[halfMoveNumber], halfMoves[halfMoveNumber + 1]].join(' '));
+        }
+        return moves;
     }
 
     loadMoveHistory(moveHistory) {

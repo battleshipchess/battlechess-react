@@ -12,6 +12,7 @@ import hitSoundFile from './sounds/9mm-pistol-shoot-short-reverb-7152.mp3';
 import sinkSoundFile from './sounds/cannon-shot-6153-cropped.mp3';
 import GameFooter from './GameFooter';
 import AppHeader from './AppHeader';
+import NotationPanel from './NotationPanel';
 
 const GAME_OVER_CHESS = "chess";
 const GAME_OVER_BATTLESHIP = "battleship";
@@ -103,13 +104,13 @@ class App extends React.Component {
 
     playSound(move) {
         if (move.sunk) {
-            const sinkSound = new UIfx(sinkSoundFile, { volume: .3 });
+            const sinkSound = new UIfx(sinkSoundFile, { volume: .15 });
             sinkSound.play();
         } else if (move.hit) {
-            const hitSound = new UIfx(hitSoundFile, { volume: .3 });
+            const hitSound = new UIfx(hitSoundFile, { volume: .15 });
             hitSound.play();
         } else {
-            const missSound = new UIfx(missSoundFile, { volume: .3 });
+            const missSound = new UIfx(missSoundFile, { volume: .15 });
             missSound.play();
         }
     }
@@ -290,6 +291,7 @@ class App extends React.Component {
                     <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} lastMove={this.state.lastMove} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} />
                 </div>
                 <div className='mainContentVertical'>
+                    <NotationPanel chess={this.state.chess} color={this.state.color} />
                     <div style={{ display: "flex", justifyContent: "center" }}>
                         <input type="button" data-type="primary" value="RESIGN" onClick={this.resign} />
                     </div>
@@ -341,6 +343,7 @@ class App extends React.Component {
                     <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} lastMove={this.state.lastMove} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} />
                 </div>
                 <div className='mainContentVertical'>
+                    <NotationPanel chess={this.state.chess} color={this.state.color} />
                     {this.renderWinner()}
                     <div style={{ display: "flex", justifyContent: "center" }}>
                         <input type="button" data-type="primary" value="NEW GAME" onClick={this.resetGame} />

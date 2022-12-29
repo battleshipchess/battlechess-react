@@ -1,0 +1,15 @@
+.notationPanel {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 1000px;
+    justify-content: center;
+}
+
+.notationPanel > span {
+    padding: .25em;
+    margin: .25em;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: .25em;
+    line-height: 2;
+}
