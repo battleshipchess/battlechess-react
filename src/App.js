@@ -294,6 +294,7 @@ class App extends React.Component {
                         <input type="button" data-type="primary" value="RESIGN" onClick={this.resign} />
                     </div>
                 </div>
+                <GameFooter state="rules" />
             </div>
         );
     }
