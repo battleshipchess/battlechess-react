@@ -103,11 +103,14 @@ class App extends React.Component {
     }
 
     playSound(move) {
-        if (move.sunk) {
-            const sinkSound = new UIfx(sinkSoundFile, { volume: .15 });
+        if (move === "GAME_OVER") {
+            const gameOverSound = new UIfx(sinkSoundFile, { volume: .1 });
+            gameOverSound.play();
+        } else if (move.sunk) {
+            const sinkSound = new UIfx(sinkSoundFile, { volume: .1 });
             sinkSound.play();
         } else if (move.hit) {
-            const hitSound = new UIfx(hitSoundFile, { volume: .15 });
+            const hitSound = new UIfx(hitSoundFile, { volume: .05});
             hitSound.play();
         } else {
             const missSound = new UIfx(missSoundFile, { volume: .15 });
@@ -129,6 +132,7 @@ class App extends React.Component {
         } else if (data.messageType === "UPDATE_STATE" && data.state === "GAME_OVER") {
             let chess = new Battlechess();
             chess.loadMoveHistory(data.moveHistory);
+            this.playSound(data.state);
             this.setState({
                 gameState: this.states.game_over,
                 winner: data.winner,

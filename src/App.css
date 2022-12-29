@@ -131,6 +131,7 @@ input[type="button"][data-type="disabled"] {
 
 .inline-img {
     height: 1.5em;
+    width: auto;
     vertical-align: bottom;
     display: inline;
 }

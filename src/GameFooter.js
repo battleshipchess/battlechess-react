@@ -40,7 +40,7 @@ function GameFooter(props) {
                         About me
                     </div>
                     <div>
-                        <img src={process.env.PUBLIC_URL + '/pieces/cburnett/bP.svg'} alt={`black pawn`} className="inline-img" />
+                        <img src={process.env.PUBLIC_URL + '/pieces/cburnett/bP.svg'} alt={`black pawn`} className="inline-img" width="100" height="100"/>
                         CS Student who likes chess
                     </div>
                     <div>
