@@ -106,10 +106,10 @@ class App extends React.Component {
         if (move === "GAME_OVER") {
             const gameOverSound = new UIfx(sinkSoundFile, { volume: .1 });
             gameOverSound.play();
-        } else if (move.sunk) {
+        } else if (move.hitFlags.sunk) {
             const sinkSound = new UIfx(sinkSoundFile, { volume: .1 });
             sinkSound.play();
-        } else if (move.hit) {
+        } else if (move.hitFlags.hit) {
             const hitSound = new UIfx(hitSoundFile, { volume: .05});
             hitSound.play();
         } else {
@@ -181,7 +181,7 @@ class App extends React.Component {
 
         let chess = new Battlechess();
         chess.loadMoveHistory(this.state.chess.moveHistory);
-        let move = chess.move(sourceSquare, targetSquare);
+        let move = chess.move(sourceSquare, targetSquare, chess.calculateHitFlags(false, false, false, false));
         if (move) {
             this.state.ws.send(JSON.stringify({
                 messageType: "MAKE_MOVE",
@@ -319,10 +319,10 @@ class App extends React.Component {
         gameOverMessages.win[GAME_OVER_TIME_OUT] = ['Looks like time has run out for your opponent. Well played!'];
         gameOverMessages.win[GAME_OVER_RESIGN] = ['Looks like your opponent has fled the battle! Congratulations, you won!'];
 
-        gameOverMessages.loss[GAME_OVER_CHESS] = ['Your king has been captured by your opponent and your army has fled the battle. Better luck next time!'];
+        gameOverMessages.loss[GAME_OVER_CHESS] = ['Your king has been captured and your army has fled the battle. Better luck next time!'];
         gameOverMessages.loss[GAME_OVER_BATTLESHIP] = ['Your last ship has been sunk! The battle has been lost, but the war is far from over.'];
-        gameOverMessages.loss[GAME_OVER_TIME_OUT] = ['Hesitation is the enemy of opportunity. Looks like time has run out this time!'];
-        gameOverMessages.loss[GAME_OVER_RESIGN] = ['A good general knows when a battle is lost! Time to regroup and continue the fight!'];
+        gameOverMessages.loss[GAME_OVER_TIME_OUT] = ['Hesitation is the enemy of opportunity. Looks like your time has run out!'];
+        gameOverMessages.loss[GAME_OVER_RESIGN] = ['A good general knows when a battle is lost! Time to regroup and return to the fight!'];
 
         if (this.state.winner === null) {
             return <div className="game_result">It's a DRAW. Time for a rematch</div>

@@ -36,15 +36,14 @@ function swap_color(c) {
 // ----------------
 
 class Move {
-    constructor({ color, from, to, flags, piece, san }, hit, sunk) {
+    constructor({ color, from, to, flags, piece, san }, hitFlags) {
         this.color = color;
         this.from = from;
         this.to = to;
         this.flags = flags;
         this.piece = piece;
         this.san = san;
-        this.hit = hit;
-        this.sunk = sunk;
+        this.hitFlags = hitFlags;
     }
 }
 
@@ -60,9 +59,27 @@ class Battlechess {
         let notation = '';
         this.moveHistory.forEach(move => {
             notation += move.san;
-            if (move.sunk) {
+            if(move.san === 'O-O' ||move.san === 'O-O-O') {
+                if (move.hitFlags.king.sunk) {
+                    notation += '↓';
+                } else if (move.hitFlags.king.hit) {
+                    notation += '.';
+                } else if (move.hitFlags.hit) {
+                    notation += '_';
+                }
+                if (move.hitFlags.rook.sunk) {
+                    notation += '↓';
+                } else if (move.hitFlags.rook.hit) {
+                    notation += '.';
+                } else if(!move.hitFlags.hit) {
+                    halfMoves.push(notation);
+                    notation = '';
+                }
+                return;
+            }
+            if (move.hitFlags.sunk) {
                 notation += '↓';
-            } else if (move.hit) {
+            } else if (move.hitFlags.hit) {
                 notation += '.';
             } else {
                 halfMoves.push(notation);
@@ -94,11 +111,26 @@ class Battlechess {
         this.chess = new Chess(this.initialFen);
         this.moveHistory = [];
         moveHistory.forEach(move => {
-            this.move(move.from, move.to, move.hit, move.sunk);
+            this.move(move.from, move.to, move.hitFlags);
         })
     }
 
-    move(from, to, hit, sunk) {
+    calculateHitFlags(mainHit, mainSunk, castleHit, castleSunk) {
+        return {
+            hit: mainHit || castleHit,
+            sunk: mainSunk || castleSunk,
+            king: {
+                hit: mainHit,
+                sunk: mainSunk,
+            },
+            rook: {
+                hit: castleHit,
+                sunk: castleSunk,
+            },
+        }
+    }
+
+    move(from, to, hitFlags) {
         let moveObj = null
         const moves = this.chess._moves({ legal: false, square: from })
         for (let i = 0; i < moves.length; i++) {
@@ -118,10 +150,10 @@ class Battlechess {
 
         const prettyMove = this.chess._makePretty(moveObj)
 
-        this.moveHistory.push(new Move(prettyMove, hit, sunk));
+        this.moveHistory.push(new Move(prettyMove, hitFlags));
         this.chess._makeMove(moveObj);
 
-        if (hit) {
+        if (hitFlags.hit) {
             let newFen = this.chess.fen().split(" ");
             newFen[1] = swap_color(newFen[1]); // stay at same color
             newFen[3] = '-'; // remove en passant square

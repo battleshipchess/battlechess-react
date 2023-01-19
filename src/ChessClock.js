@@ -26,6 +26,7 @@ class ChessClock extends React.Component {
                 if (this.props.turn === null) {
                     opponentTime = this.props.opponentLeftoverTime;
                     playerTime = this.props.leftoverTime;
+                    clearInterval(this.refreshIntervalId);
                 } else if (this.props.turn === this.props.color) {
                     opponentTime = this.props.opponentLeftoverTime;
                     playerTime = this.props.leftoverTime - (Date.now() - this.props.lastTimeSync);

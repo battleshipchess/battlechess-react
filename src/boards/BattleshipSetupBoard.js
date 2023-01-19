@@ -54,12 +54,19 @@ class BattleshipSetupBoard extends React.Component {
 
     randomizeShips() {
         let ships = JSON.parse(JSON.stringify(this.state.ships));
+        let allPlaced = !ships.some(ship => ship.position.x === null || ship.position.y === null);
+        if (allPlaced) {
+            ships.forEach(ship => {
+                ship.position.x = null;
+                ship.position.y = null;
+            });
+        }
         ships.forEach(ship => {
-            ship.position.x = null;
-            ship.position.y = null;
-        });
-        ships.forEach(ship => {
+            if (!allPlaced && ship.position.x !== null && ship.position.y !== null) {
+                return;
+            }
             let done = false;
+            let attempts = 0;
             let newPosition = {};
             while (!done) {
                 newPosition.x = Math.floor(Math.random() * this.props.size);
@@ -73,6 +80,10 @@ class BattleshipSetupBoard extends React.Component {
                 }
 
                 done = this.isDropPositionPossible(ships, newPosition);
+                attempts++;
+                if(attempts > 5000) {
+                    return;
+                }
             }
             ship.position = newPosition;
         })
