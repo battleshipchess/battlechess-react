@@ -91,6 +91,14 @@ class App extends React.Component {
                 playerId: this.state.playerId,
             }))
         });
+        ws.addEventListener('close', () => {
+            // delay to prevent popup on page reload
+            setTimeout(() => {
+                this.setState({
+                    disconnected: true,
+                })
+            }, 2000);
+        });
         this.setState({
             ws: ws,
         })
@@ -110,7 +118,7 @@ class App extends React.Component {
             const sinkSound = new UIfx(sinkSoundFile, { volume: .1 });
             sinkSound.play();
         } else if (move.hitFlags.hit) {
-            const hitSound = new UIfx(hitSoundFile, { volume: .05});
+            const hitSound = new UIfx(hitSoundFile, { volume: .05 });
             hitSound.play();
         } else {
             const missSound = new UIfx(missSoundFile, { volume: .15 });
@@ -393,15 +401,35 @@ class App extends React.Component {
         }
     }
 
+    renderDisconnectedOverlay() {
+        document.getElementsByTagName('body')[0].classList.add("noscroll");
+        return <div className='overlayModal'>
+            <div>
+                <div>Looks like you've been disconnected from the server</div>
+                <input type="button" value="Click here to reconnect" onClick={() => window.location.reload()} />
+            </div>
+        </div>
+    }
+
     render() {
+        let content = null;
         if (this.state.gameState === this.states.setup) {
-            return this.renderBoardSetup();
+            content = this.renderBoardSetup();
         } else if (this.state.gameState === this.states.waiting_for_opponent) {
-            return this.renderWaitingForOpponent();
+            content = this.renderWaitingForOpponent();
         } else if (this.state.gameState === this.states.game_over) {
-            return this.renderGameOver();
+            content = this.renderGameOver();
+        } else {
+            content = this.renderGame();
         }
-        return this.renderGame();
+
+        if (this.state.disconnected) {
+            return (<>
+                {content}
+                {this.renderDisconnectedOverlay()}
+            </>);
+        }
+        return content;
     }
 }
 

@@ -42,3 +42,7 @@ code {
     --selected-color: rgba(20,85,30,0.5);
     --in-check-color: rgba(255, 55, 55, 0.7);
 }
+
+.noscroll {
+    overflow: hidden;
+}

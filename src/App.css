@@ -189,3 +189,26 @@ input[type="button"][data-type="disabled"] {
         opacity: 0;
     }
 }
+
+.overlayModal {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    background-color: rgba(0, 0, 0, .3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.overlayModal > div {
+    width: min(300px, 80%);
+    padding: 2em;
+    background-color: white;
+    border: 3px solid black;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    box-sizing: border-box;
+}
