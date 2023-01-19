@@ -144,7 +144,6 @@ class App extends React.Component {
                 leftoverTime: data.leftoverTime,
                 opponentLeftoverTime: data.opponentLeftoverTime,
                 lastTimeSync: Date.now(),
-                lastMove: data.lastMove,
                 isOpponentLive: data.isOpponentLive,
             })
         } else {
@@ -166,7 +165,6 @@ class App extends React.Component {
                 leftoverTime: data.leftoverTime,
                 opponentLeftoverTime: data.opponentLeftoverTime,
                 lastTimeSync: Date.now(),
-                lastMove: data.lastMove,
                 isOpponentLive: data.isOpponentLive,
             })
         }
@@ -291,8 +289,8 @@ class App extends React.Component {
                 <AppHeader message="BattleChess" />
                 <div className='mainContent'>
                     <ChessClock leftoverTime={this.state.leftoverTime} opponentLeftoverTime={this.state.opponentLeftoverTime} lastTimeSync={this.state.lastTimeSync} turn={this.state.chess.turn()} color={this.state.color} onTimeOut={this.onTimeOut} isOpponentLive={this.state.isOpponentLive} />
-                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} size={this.size} color={this.state.color} lastMove={this.state.lastMove} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} />
-                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} lastMove={this.state.lastMove} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} />
+                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} size={this.size} color={this.state.color} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} />
+                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} />
                 </div>
                 <div className='mainContentVertical'>
                     <NotationPanel chess={this.state.chess} color={this.state.color} />
@@ -343,8 +341,8 @@ class App extends React.Component {
                 <AppHeader message="Game Over" state="game_over" />
                 <div className='mainContent faded disabled'>
                     <ChessClock leftoverTime={this.state.leftoverTime} opponentLeftoverTime={this.state.opponentLeftoverTime} lastTimeSync={this.state.lastTimeSync} turn={null} color={this.state.color} onTimeOut={this.onTimeOut} isOpponentLive={this.state.isOpponentLive} />
-                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} size={this.size} color={this.state.color} lastMove={this.state.lastMove} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} />
-                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} lastMove={this.state.lastMove} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} />
+                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} size={this.size} color={this.state.color} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} />
+                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} />
                 </div>
                 <div className='mainContentVertical'>
                     <NotationPanel chess={this.state.chess} color={this.state.color} />

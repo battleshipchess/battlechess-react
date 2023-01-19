@@ -180,6 +180,12 @@ class Battlechess {
     moves(square) {
         return this.chess._moves({ legal: false, square }).map((move) => this.chess._makePretty(move));
     }
+
+    lastMove() {
+        if(this.moveHistory.length === 0)
+            return null;
+        return this.moveHistory[this.moveHistory.length - 1];
+    }
 }
 
 export default Battlechess;

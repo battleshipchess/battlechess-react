@@ -60,9 +60,10 @@ function lastMoveHighlight(x, y, props) {
         x = props.size - x - 1;
         y = props.size - y - 1;
     }
-    if (props.lastMove != null && props.lastMove.from === square(x, y)) {
+    let lastMove = props.chess.lastMove();
+    if (lastMove != null && lastMove.from === square(x, y)) {
         return (<div className="fromSquare" />);
-    } else if (props.lastMove != null && props.lastMove.to === square(x, y)) {
+    } else if (lastMove != null && lastMove.to === square(x, y)) {
         return (<div className="toSquare" />);
     }
     return (<div />);
