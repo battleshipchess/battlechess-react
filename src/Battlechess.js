@@ -58,8 +58,8 @@ class Battlechess {
         let halfMoves = [];
         let notation = '';
         this.moveHistory.forEach(move => {
-            notation += move.san;
-            if(move.san === 'O-O' ||move.san === 'O-O-O') {
+            notation += move.san.replace('#', '+'); // mate in normal chess isn't mate here
+            if(move.san.startsWith('O-O')) {
                 if (move.hitFlags.king.sunk) {
                     notation += '↓';
                 } else if (move.hitFlags.king.hit) {
