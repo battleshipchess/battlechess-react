@@ -52,6 +52,16 @@ class Battlechess {
         this.initialFen = fen ? fen : defaultFen;
         this.chess = new Chess(this.initialFen);
         this.moveHistory = [];
+        this.reviewMove = null;
+    }
+
+    setReviewMove(moveIdx) {
+        this.reviewMove = moveIdx;
+
+        this.reviewChess = new Chess(this.initialFen);
+        this.moveHistory.slice(0, moveIdx + 1).forEach(move => {
+            this.renderReviewMove(move);
+        })
     }
 
     halfMoveNotation() {
@@ -59,7 +69,7 @@ class Battlechess {
         let notation = '';
         this.moveHistory.forEach(move => {
             notation += move.san.replace('#', '+'); // mate in normal chess isn't mate here
-            if(move.san.startsWith('O-O')) {
+            if (move.san.startsWith('O-O')) {
                 if (move.hitFlags.king.sunk) {
                     notation += '↓';
                 } else if (move.hitFlags.king.hit) {
@@ -71,7 +81,7 @@ class Battlechess {
                     notation += '↓';
                 } else if (move.hitFlags.rook.hit) {
                     notation += '.';
-                } else if(!move.hitFlags.hit) {
+                } else if (!move.hitFlags.hit) {
                     halfMoves.push(notation);
                     notation = '';
                 }
@@ -86,7 +96,7 @@ class Battlechess {
                 notation = '';
             }
         });
-        if(notation !== '') {
+        if (notation !== '') {
             halfMoves.push(notation);
         }
         return halfMoves;
@@ -101,7 +111,7 @@ class Battlechess {
     moveNotation() {
         let halfMoves = this.halfMoveNotation();
         let moves = [];
-        for(let halfMoveNumber = 0; halfMoveNumber < halfMoves.length; halfMoveNumber += 2) {
+        for (let halfMoveNumber = 0; halfMoveNumber < halfMoves.length; halfMoveNumber += 2) {
             moves.push(((halfMoveNumber / 2) + 1) + '. ' + [halfMoves[halfMoveNumber], halfMoves[halfMoveNumber + 1]].join(' '));
         }
         return moves;
@@ -130,9 +140,9 @@ class Battlechess {
         }
     }
 
-    move(from, to, hitFlags) {
+    findMatchingMove(from, to, chess) {
         let moveObj = null
-        const moves = this.chess._moves({ legal: false, square: from })
+        const moves = chess._moves({ legal: false, square: from })
         for (let i = 0; i < moves.length; i++) {
             if (
                 from === algebraic(moves[i].from) &&
@@ -144,46 +154,63 @@ class Battlechess {
             }
         }
 
-        if (!moveObj) {
+        return moveObj;
+    }
+
+    modifyFenOnHit(hitFlags, fen) {
+        if (!hitFlags.hit)
+            return fen;
+
+        let newFen = fen.split(" ");
+        newFen[1] = swap_color(newFen[1]); // stay at same color
+        newFen[3] = '-'; // remove en passant square
+        newFen[5] = newFen[1] === BLACK ? newFen[5] - 1 : newFen[5]; // stay at same fullmove count
+        return newFen.join(" ");
+    }
+
+    move(from, to, hitFlags) {
+        let moveObj = this.findMatchingMove(from, to, this.chess);
+        if (!moveObj)
             return null;
-        }
 
         const prettyMove = this.chess._makePretty(moveObj)
 
         this.moveHistory.push(new Move(prettyMove, hitFlags));
         this.chess._makeMove(moveObj);
-
-        if (hitFlags.hit) {
-            let newFen = this.chess.fen().split(" ");
-            newFen[1] = swap_color(newFen[1]); // stay at same color
-            newFen[3] = '-'; // remove en passant square
-            newFen[5] = newFen[1] === BLACK ? newFen[5] - 1 : newFen[5]; // stay at same fullmove count
-            newFen = newFen.join(" ");
-            this.chess = new Chess(newFen);
-        }
+        this.chess = new Chess(this.modifyFenOnHit(hitFlags, this.chess.fen()));
 
         return prettyMove
+    }
+
+    renderReviewMove(move) {
+        let moveObj = this.findMatchingMove(move.from, move.to, this.reviewChess);
+        if (!moveObj)
+            return null;
+        this.reviewChess._makeMove(moveObj);
+        this.reviewChess = new Chess(this.modifyFenOnHit(move.hitFlags, this.reviewChess.fen()));
     }
 
     turn() {
         return this.chess.turn();
     }
 
-    notTurn() {
-        return swap_color(this.chess.turn());
-    }
-
     get(square) {
+        if (this.reviewMove != null)
+            return this.reviewChess.get(square);
         return this.chess.get(square);
     }
 
     moves(square) {
+        if (this.reviewMove != null)
+            return [];
         return this.chess._moves({ legal: false, square }).map((move) => this.chess._makePretty(move));
     }
 
     lastMove() {
-        if(this.moveHistory.length === 0)
+        if (this.moveHistory.length === 0)
             return null;
+        if (this.reviewMove != null)
+            return this.moveHistory[this.reviewMove];
         return this.moveHistory[this.moveHistory.length - 1];
     }
 }

@@ -75,7 +75,7 @@ function checkHighlight(x, y, props) {
         y = props.size - y - 1;
     }
     let piece = props.chess.get(square(x, y));
-    if (props.chess.chess.inCheck() && piece.type === 'k' && piece.color === props.chess.turn()) {
+    if (props.chess.chess.inCheck() && piece.type === 'k') {
         return (<div className="inCheck" />);
     }
     return (<div />);

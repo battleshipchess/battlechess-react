@@ -1,24 +1,9 @@
+import './App.css';
 import React from 'react';
 import Cookies from 'js-cookie';
-import './App.css';
-import BattleshipSetupBoard from './boards/BattleshipSetupBoard';
-import BattleChessboard from './boards/BattleChessboard';
 import Battlechess from './Battlechess';
-import ChessClock from './ChessClock';
-
-import UIfx from 'uifx';
-import missSoundFile from './sounds/splash-by-blaukreuz-6261.mp3';
-import hitSoundFile from './sounds/9mm-pistol-shoot-short-reverb-7152.mp3';
-import sinkSoundFile from './sounds/cannon-shot-6153-cropped.mp3';
-import GameFooter from './GameFooter';
-import AppHeader from './AppHeader';
-import NotationPanel from './NotationPanel';
-
-const GAME_OVER_CHESS = "chess";
-const GAME_OVER_BATTLESHIP = "battleship";
-const GAME_OVER_TIME_OUT = "timeout";
-const GAME_OVER_RESIGN = "resign";
-
+import AppRender from './AppRender';
+import Utils from './Utils';
 class App extends React.Component {
 
     constructor(props) {
@@ -55,7 +40,7 @@ class App extends React.Component {
         }
 
         if (!Cookies.get("playerId")) {
-            Cookies.set("playerId", this.randomId(), { expires: 7 });
+            Cookies.set("playerId", Utils.randomId(), { expires: 7 });
         }
 
         this.state = {
@@ -73,6 +58,15 @@ class App extends React.Component {
         this.selectPiece = this.selectPiece.bind(this);
         this.deselectPiece = this.deselectPiece.bind(this);
         this.onTimeOut = this.onTimeOut.bind(this);
+        this.reviewMove = this.reviewMove.bind(this);
+        this.reviewMoveDelta = this.reviewMoveDelta.bind(this);
+
+        this.renderBoardSetup = AppRender.renderBoardSetup.bind(this);
+        this.renderGame = AppRender.renderGame.bind(this);
+        this.renderWinner = AppRender.renderWinner.bind(this);
+        this.renderGameOver = AppRender.renderGameOver.bind(this);
+        this.renderWaitingForOpponent = AppRender.renderWaitingForOpponent.bind(this);
+        this.renderDisconnectedOverlay = AppRender.renderDisconnectedOverlay.bind(this);
     }
 
     componentDidMount() {
@@ -102,27 +96,14 @@ class App extends React.Component {
         this.setState({
             ws: ws,
         })
-    }
 
-    randomId() {
-        const dateString = Date.now().toString(36);
-        const randomness = Math.random().toString(36).substring(2);
-        return dateString + randomness;
-    }
-
-    playSound(move) {
-        if (move === "GAME_OVER") {
-            const gameOverSound = new UIfx(sinkSoundFile, { volume: .1 });
-            gameOverSound.play();
-        } else if (move.hitFlags.sunk) {
-            const sinkSound = new UIfx(sinkSoundFile, { volume: .1 });
-            sinkSound.play();
-        } else if (move.hitFlags.hit) {
-            const hitSound = new UIfx(hitSoundFile, { volume: .05 });
-            hitSound.play();
-        } else {
-            const missSound = new UIfx(missSoundFile, { volume: .15 });
-            missSound.play();
+        document.onkeydown = (e) => {
+            if (e.key === 'ArrowLeft') {
+                this.reviewMoveDelta(-1);
+            }
+            else if (e.key === 'ArrowRight') {
+                this.reviewMoveDelta(1);
+            }
         }
     }
 
@@ -140,7 +121,7 @@ class App extends React.Component {
         } else if (data.messageType === "UPDATE_STATE" && data.state === "GAME_OVER") {
             let chess = new Battlechess();
             chess.loadMoveHistory(data.moveHistory);
-            this.playSound(data.state);
+            Utils.playSound(data.state);
             this.setState({
                 gameState: this.states.game_over,
                 winner: data.winner,
@@ -156,7 +137,7 @@ class App extends React.Component {
             })
         } else {
             if (data.moveHistory.length > 0) {
-                this.playSound(data.moveHistory[data.moveHistory.length - 1]);
+                Utils.playSound(data.moveHistory[data.moveHistory.length - 1]);
             }
             let chess = new Battlechess();
             chess.loadMoveHistory(data.moveHistory);
@@ -226,6 +207,10 @@ class App extends React.Component {
             }
         });
 
+        if(window.debugBattleshipBoard) {
+            board = window.debugBattleshipBoard;    
+        }
+
         this.setState({
             board: board,
             gameState: this.states.waiting_for_opponent,
@@ -245,7 +230,7 @@ class App extends React.Component {
     }
 
     resetGame() {
-        Cookies.set("playerId", this.randomId(), { expires: 7 });
+        Cookies.set("playerId", Utils.randomId(), { expires: 7 });
         if (this.state.ws) {
             this.state.ws.send(JSON.stringify({
                 messageType: "ABORT",
@@ -269,146 +254,29 @@ class App extends React.Component {
         }))
     }
 
-    copyToClipboard(text, event) {
-        navigator.clipboard.writeText(text);
+    reviewMove(moveIdx) {
+        if (!this.state.chess) return;
+        if (moveIdx >= this.state.chess.moveHistory.length - 1)
+            moveIdx = null;
+        if (moveIdx < -1)
+            moveIdx = -1;
 
-        let indicatorTarget = event.target.closest(".shareURL");
-        indicatorTarget.classList.remove("copied");
-        indicatorTarget.classList.add("copied");
-        setTimeout(() => indicatorTarget.classList.remove("copied"), 2000);
+        this.state.chess.setReviewMove(moveIdx);
+
+        this.setState({
+            chess: this.state.chess,
+        })
     }
 
-    renderBoardSetup() {
-        return (
-            <div className="App">
-                <AppHeader message="Welcome to BattleChess" />
-                <div className='mainContent'>
-                    <BattleshipSetupBoard onBoardSetupCompleted={this.onBoardSetupCompleted} size={this.size} gameCode={this.state.gameCode} />
-                    <div />
-                </div>
-                <GameFooter />
-            </div>
-        );
-    }
+    reviewMoveDelta(delta) {
+        if (!this.state.chess) return;
+        let moveIdx = this.state.chess.reviewMove;
+        if (moveIdx === null)
+            moveIdx = this.state.chess.moveHistory.length - 1;
 
-    renderGame() {
-        return (
-            <div className="App">
-                <AppHeader message="BattleChess" />
-                <div className='mainContent'>
-                    <ChessClock leftoverTime={this.state.leftoverTime} opponentLeftoverTime={this.state.opponentLeftoverTime} lastTimeSync={this.state.lastTimeSync} turn={this.state.chess.turn()} color={this.state.color} onTimeOut={this.onTimeOut} isOpponentLive={this.state.isOpponentLive} />
-                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} size={this.size} color={this.state.color} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} />
-                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} />
-                </div>
-                <div className='mainContentVertical'>
-                    <NotationPanel chess={this.state.chess} color={this.state.color} />
-                    <div style={{ display: "flex", justifyContent: "center" }}>
-                        <input type="button" data-type="primary" value="RESIGN" onClick={this.resign} />
-                    </div>
-                </div>
-                <GameFooter state="rules" />
-            </div>
-        );
-    }
+        moveIdx += delta;
 
-    renderWinner() {
-        const gameOverMessages = {
-            win: {
-                default: ['Congratulations! You Won!'],
-            },
-            loss: {
-                default: ['Looks like you lost. Better luck next time!'],
-            }
-        }
-        gameOverMessages.win[GAME_OVER_CHESS] = ['The king has been captured and your opponents fleet has scattered in fear! Looks like you\'ve won!'];
-        gameOverMessages.win[GAME_OVER_BATTLESHIP] = ['Your opponents fleet has been sunk! Well played captain!'];
-        gameOverMessages.win[GAME_OVER_TIME_OUT] = ['Looks like time has run out for your opponent. Well played!'];
-        gameOverMessages.win[GAME_OVER_RESIGN] = ['Looks like your opponent has fled the battle! Congratulations, you won!'];
-
-        gameOverMessages.loss[GAME_OVER_CHESS] = ['Your king has been captured and your army has fled the battle. Better luck next time!'];
-        gameOverMessages.loss[GAME_OVER_BATTLESHIP] = ['Your last ship has been sunk! The battle has been lost, but the war is far from over.'];
-        gameOverMessages.loss[GAME_OVER_TIME_OUT] = ['Hesitation is the enemy of opportunity. Looks like your time has run out!'];
-        gameOverMessages.loss[GAME_OVER_RESIGN] = ['A good general knows when a battle is lost! Time to regroup and return to the fight!'];
-
-        if (this.state.winner === null) {
-            return <div className="game_result">It's a DRAW. Time for a rematch</div>
-        }
-        let winState = this.state.winner === this.state.color ? "win" : "loss";
-        let messageOptions = gameOverMessages[winState][this.state.winCondition];
-        if (messageOptions == null || messageOptions.length === 0) {
-            messageOptions = gameOverMessages[winState].default;
-        }
-
-        let messageIdx = Math.floor(Math.random() * messageOptions.length);
-        return <div className="game_result">{messageOptions[messageIdx]}</div>
-    }
-
-    renderGameOver() {
-        return (
-            <div className="App">
-                <AppHeader message="Game Over" state="game_over" />
-                <div className='mainContent faded disabled'>
-                    <ChessClock leftoverTime={this.state.leftoverTime} opponentLeftoverTime={this.state.opponentLeftoverTime} lastTimeSync={this.state.lastTimeSync} turn={null} color={this.state.color} onTimeOut={this.onTimeOut} isOpponentLive={this.state.isOpponentLive} />
-                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} size={this.size} color={this.state.color} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} />
-                    <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} />
-                </div>
-                <div className='mainContentVertical'>
-                    <NotationPanel chess={this.state.chess} color={this.state.color} />
-                    {this.renderWinner()}
-                    <div style={{ display: "flex", justifyContent: "center" }}>
-                        <input type="button" data-type="primary" value="NEW GAME" onClick={this.resetGame} />
-                    </div>
-                </div>
-                <GameFooter />
-            </div>
-        );
-    }
-
-    renderWaitingForOpponent() {
-        if (!this.state.gameCode) {
-            return (
-                <div className="App">
-                    <AppHeader message="Waiting for opponent" />
-                    <div className='mainContentVertical waitingForOpponent'>
-                        You will be paired with the next person to start a game
-                        <div className="battlechessIcon loading"></div>
-                        <input type="button" data-type="primary" value="ABORT" onClick={this.resetGame} />
-                    </div>
-                    <GameFooter />
-                </div>
-            );
-        } else {
-            let url = "https://battlechess.club/?game=" + this.state.gameCode;
-            return (
-                <div className="App">
-                    <AppHeader message="Waiting for opponent" />
-                    <div className='mainContentVertical waitingForOpponent'>
-                        <div className="shareURL">
-                            <div style={{ cursor: 'pointer' }} onClick={(event) => this.copyToClipboard(url, event)}>
-                                <img src={process.env.PUBLIC_URL + '/copyicon.svg'} className="inline-img" alt="copy to clipboard" />
-                            </div>
-                            <div>
-                                {url}
-                            </div>
-                        </div>
-                        Invite a friend to play by copying the URL
-                        <div className="battlechessIcon loading"></div>
-                        <input type="button" data-type="primary" value="ABORT" onClick={this.resetGame} />
-                    </div>
-                    <GameFooter />
-                </div >
-            );
-        }
-    }
-
-    renderDisconnectedOverlay() {
-        document.getElementsByTagName('body')[0].classList.add("noscroll");
-        return <div className='overlayModal'>
-            <div>
-                <div>Looks like you've been disconnected from the server</div>
-                <input type="button" value="Click here to reconnect" onClick={() => window.location.reload()} />
-            </div>
-        </div>
+        this.reviewMove(moveIdx);
     }
 
     render() {
