@@ -1,7 +1,8 @@
 import './GameFooter.css';
+import CookieConsent from 'react-cookie-consent';
 
 function GameFooter(props) {
-    if (props.state === "rules") {
+    if (props.state === 'rules') {
         return (
             <footer className='gameFooter'>
                 <div>
@@ -40,7 +41,7 @@ function GameFooter(props) {
                         About me
                     </div>
                     <div>
-                        <img src={process.env.PUBLIC_URL + '/pieces/cburnett/bP.svg'} alt={`black pawn`} className="inline-img" width="100" height="100"/>
+                        <img src={process.env.PUBLIC_URL + '/pieces/cburnett/bP.svg'} alt={`black pawn`} className='inline-img' width='100' height='100' />
                         CS Student who likes chess
                     </div>
                     <div>
@@ -50,6 +51,27 @@ function GameFooter(props) {
                         💸 <a href='https://www.paypal.com/donate/?hosted_button_id=KTEHDA54Q7CGW'>Support the project</a>
                     </div>
                 </div>
+                <CookieConsent style={{
+                    color: 'white',
+                    borderTop: '3px solid black',
+                    backgroundColor: 'var(--primary-color)',
+                }} buttonStyle={{
+                    backgroundColor: 'white',
+                    color: 'var(--primary-color)',
+                    fontWeight: 'bold',
+                    border: '2px solid black',
+                    boxShadow: 'black 3px 3px',
+                    padding: '.75em',
+                }} declineButtonStyle={{
+                    backgroundColor: "transparent",
+                    color: 'white',
+                    padding: '0px',
+                    marginRight: '0px',
+                }} buttonText='Accept All' declineButtonText='Decline' enableDeclineButton={true}onAccept={() => {
+                    window.gtag('consent', 'default', {
+                        'analytics_storage': 'granted',
+                    });
+                }}>This website uses cookies to enable basic game functionality and to analyze site traffic</CookieConsent>
             </div>
         </footer>
     );
