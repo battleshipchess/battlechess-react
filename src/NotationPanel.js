@@ -1,4 +1,5 @@
 import './NotationPanel.css';
+import nextMoveSvg from './play-solid.svg';
 
 function subMoves(move) {
     return move.split(' ').slice(1).map(m => m.split(/[._↓]+/).length).reduce((partialSum, a) => partialSum + a, 0);;
@@ -11,15 +12,19 @@ function NotationPanel(props) {
     if (highlightedMove === null) highlightedMove = props.chess.moveHistory.length - 1;
     let moveIdx = 0;
 
-    return <div className='notationPanel'>{moves.map(move => {
-        let style = {};
-        if (moveIdx <= highlightedMove && (moveIdx += subMoves(move)) > highlightedMove) {
-            style = {
-                fontWeight: 'bold',
+    return <div className='notationPanel'>
+        <div className='previousMove' onClick={() => props.reviewMoveDelta(-1)}><img src={nextMoveSvg} width={1} height={1} alt="previous move" /></div>
+        <div className='nextMove' onClick={() => props.reviewMoveDelta(1)}><img src={nextMoveSvg} width={1} height={1} alt="next move" /></div>
+        {moves.map(move => {
+            let style = {};
+            if (moveIdx <= highlightedMove && (moveIdx += subMoves(move)) > highlightedMove) {
+                style = {
+                    fontWeight: 'bold',
+                }
             }
-        }
-        return <span key={move} style={style}>{move}</span>
-    })}</div>;
+            return <span key={move} style={style}>{move}</span>
+        })}
+    </div>;
 }
 
 export default NotationPanel;

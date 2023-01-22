@@ -38,7 +38,7 @@ function renderGame() {
                 <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} viewMoveIdx={this.state.viewMoveIdx} />
             </div>
             <div className='mainContentVertical'>
-                <NotationPanel chess={this.state.chess} color={this.state.color} />
+                <NotationPanel chess={this.state.chess} color={this.state.color} reviewMoveDelta={this.reviewMoveDelta} />
                 <div style={{ display: "flex", justifyContent: "center" }}>
                     <input type="button" data-type="primary" value="RESIGN" onClick={this.resign} />
                 </div>
@@ -90,7 +90,7 @@ function renderGameOver() {
                 <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} viewMoveIdx={this.state.viewMoveIdx} />
             </div>
             <div className='mainContentVertical'>
-                <NotationPanel chess={this.state.chess} color={this.state.color} />
+                <NotationPanel chess={this.state.chess} color={this.state.color} reviewMoveDelta={this.reviewMoveDelta} />
                 {this.renderWinner()}
                 <div style={{ display: "flex", justifyContent: "center" }}>
                     <input type="button" data-type="primary" value="NEW GAME" onClick={this.resetGame} />
