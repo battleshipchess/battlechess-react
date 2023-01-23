@@ -6,6 +6,12 @@
     padding: 1em;
 }
 
+@media only screen and (min-width: 600px) {
+    .mainContent {
+        flex-wrap: nowrap;
+    }
+}
+
 .mainContentVertical {
     display: flex;
     flex-direction: column;
@@ -202,7 +208,7 @@ input[type="button"][data-type="disabled"] {
     align-items: center;
 }
 
-.overlayModal > div {
+.overlayModal>div {
     width: min(300px, 80%);
     padding: 2em;
     background-color: white;

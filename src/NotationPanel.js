@@ -1,5 +1,5 @@
 import './NotationPanel.css';
-import nextMoveSvg from './play-solid.svg';
+import nextMoveSvg from './play-outline.svg';
 
 function subMoves(move) {
     return move.split(' ').slice(1).map(m => m.split(/[._↓]+/).length).reduce((partialSum, a) => partialSum + a, 0);;
@@ -13,8 +13,8 @@ function NotationPanel(props) {
     let moveIdx = 0;
 
     return <div className='notationPanel'>
-        <div className='previousMove' onClick={() => props.reviewMoveDelta(-1)}><img src={nextMoveSvg} width={1} height={1} alt="previous move" /></div>
-        <div className='nextMove' onClick={() => props.reviewMoveDelta(1)}><img src={nextMoveSvg} width={1} height={1} alt="next move" /></div>
+        {moves.length ?
+            <div className='previousMove' onClick={() => props.reviewMoveDelta(-1)}><img src={nextMoveSvg} width={1} height={1} alt="previous move" /></div> : null}
         {moves.map(move => {
             let style = {};
             if (moveIdx <= highlightedMove && (moveIdx += subMoves(move)) > highlightedMove) {
@@ -24,6 +24,8 @@ function NotationPanel(props) {
             }
             return <span key={move} style={style}>{move}</span>
         })}
+        {moves.length ?
+            <div className='nextMove' onClick={() => props.reviewMoveDelta(1)}><img src={nextMoveSvg} width={1} height={1} alt="next move" /></div> : null}
     </div>;
 }
 

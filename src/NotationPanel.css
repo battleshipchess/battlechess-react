@@ -15,9 +15,6 @@
     line-height: 2;
 }
 
-.previousMove img {
-    transform: rotate(180deg);
-}
 
 .previousMove,
 .nextMove {
@@ -30,4 +27,8 @@
 .nextMove img {
     width: 100%;
     height: 100%;
+}
+
+.previousMove img {
+    transform: rotate(180deg);
 }
