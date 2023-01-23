@@ -1,6 +1,30 @@
 import './GameFooter.css';
 import CookieConsent from 'react-cookie-consent';
 
+function renderCookieConsent() {
+    return <CookieConsent style={{
+        color: 'white',
+        borderTop: '3px solid black',
+        backgroundColor: 'var(--primary-color)',
+    }} buttonStyle={{
+        backgroundColor: 'white',
+        color: 'var(--primary-color)',
+        fontWeight: 'bold',
+        border: '2px solid black',
+        boxShadow: 'black 3px 3px',
+        padding: '.75em',
+    }} declineButtonStyle={{
+        backgroundColor: "transparent",
+        color: 'white',
+        padding: '0px',
+        marginRight: '0px',
+    }} buttonText='Accept All' declineButtonText='Decline' enableDeclineButton={true} onAccept={() => {
+        window.gtag('consent', 'default', {
+            'analytics_storage': 'granted',
+        });
+    }}>This website uses cookies to enable basic game functionality and to analyze site traffic</CookieConsent>;
+}
+
 function GameFooter(props) {
     if (props.state === 'rules') {
         return (
@@ -21,6 +45,7 @@ function GameFooter(props) {
                             </ul>
                         </div>
                     </div>
+                    {renderCookieConsent()}
                 </div>
             </footer>
         );
@@ -51,27 +76,7 @@ function GameFooter(props) {
                         💸 <a href='https://www.paypal.com/donate/?hosted_button_id=KTEHDA54Q7CGW'>Support the project</a>
                     </div>
                 </div>
-                <CookieConsent style={{
-                    color: 'white',
-                    borderTop: '3px solid black',
-                    backgroundColor: 'var(--primary-color)',
-                }} buttonStyle={{
-                    backgroundColor: 'white',
-                    color: 'var(--primary-color)',
-                    fontWeight: 'bold',
-                    border: '2px solid black',
-                    boxShadow: 'black 3px 3px',
-                    padding: '.75em',
-                }} declineButtonStyle={{
-                    backgroundColor: "transparent",
-                    color: 'white',
-                    padding: '0px',
-                    marginRight: '0px',
-                }} buttonText='Accept All' declineButtonText='Decline' enableDeclineButton={true}onAccept={() => {
-                    window.gtag('consent', 'default', {
-                        'analytics_storage': 'granted',
-                    });
-                }}>This website uses cookies to enable basic game functionality and to analyze site traffic</CookieConsent>
+                {renderCookieConsent()}
             </div>
         </footer>
     );
