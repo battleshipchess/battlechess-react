@@ -213,6 +213,14 @@ class Battlechess {
             return this.moveHistory[this.reviewMove];
         return this.moveHistory[this.moveHistory.length - 1];
     }
+
+    inCheck(color) {
+        let chess = this.chess;
+        if (this.reviewMove)
+            chess = this.reviewChess;
+        
+        return chess._isKingAttacked(color);
+    }
 }
 
 export default Battlechess;

@@ -1,9 +1,11 @@
+import { KING } from 'chess.js';
+import { BLACK } from 'chess.js';
 import { useEffect, useRef } from 'react';
 import "./BattleshipBoard.css";
 import "./Chessboard.css";
 
 function getContent(props, colIdx, rowIdx) {
-    if (props.color === 'b') {
+    if (props.color === BLACK) {
         return props.board[props.size - colIdx - 1][props.size - rowIdx - 1];
     }
     return props.board[colIdx][rowIdx];
@@ -34,7 +36,7 @@ function onChessPieceDragEnd(event) {
 }
 
 function pieceOverlay(props, x, y, selectPiece) {
-    if (props.color === 'b') {
+    if (props.color === BLACK) {
         x = props.size - x - 1;
         y = props.size - y - 1;
     }
@@ -56,7 +58,7 @@ function shipOverlay(content) {
 }
 
 function lastMoveHighlight(x, y, props) {
-    if (props.color === 'b') {
+    if (props.color === BLACK) {
         x = props.size - x - 1;
         y = props.size - y - 1;
     }
@@ -70,19 +72,19 @@ function lastMoveHighlight(x, y, props) {
 }
 
 function checkHighlight(x, y, props) {
-    if (props.color === 'b') {
+    if (props.color === BLACK) {
         x = props.size - x - 1;
         y = props.size - y - 1;
     }
     let piece = props.chess.get(square(x, y));
-    if (props.chess.chess.inCheck() && piece.type === 'k') {
+    if (piece.type === KING && props.chess.inCheck(piece.color)) {
         return (<div className="inCheck" />);
     }
     return (<div />);
 }
 
 function selectedPieceHighlight(x, y, props) {
-    if (props.color === 'b') {
+    if (props.color === BLACK) {
         x = props.size - x - 1;
         y = props.size - y - 1;
     }
@@ -108,7 +110,7 @@ function calculateCoordinates(event, color, size) {
 
     let x = Math.floor(xInBoard * size / bounds.width);
     let y = Math.floor(yInBoard * size / bounds.height);
-    if (color === 'b') {
+    if (color === BLACK) {
         x = size - x - 1;
         y = size - y - 1;
     }
