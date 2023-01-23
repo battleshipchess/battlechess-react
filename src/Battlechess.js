@@ -53,6 +53,8 @@ class Battlechess {
         this.chess = new Chess(this.initialFen);
         this.moveHistory = [];
         this.reviewMove = null;
+        this.reachedPositions = {};
+        this.maxPositionRepetitions = 0;
     }
 
     setReviewMove(moveIdx) {
@@ -177,7 +179,16 @@ class Battlechess {
 
         this.moveHistory.push(new Move(prettyMove, hitFlags));
         this.chess._makeMove(moveObj);
-        this.chess = new Chess(this.modifyFenOnHit(hitFlags, this.chess.fen()));
+
+        let newFen = this.modifyFenOnHit(hitFlags, this.chess.fen());
+        let newPosition = newFen.split(" ").slice(0, 4).join(" ");
+        this.chess = new Chess(newFen);
+
+        if (!this.reachedPositions[newPosition])
+            this.reachedPositions[newPosition] = 0;
+        this.reachedPositions[newPosition] += 1;
+        if (this.reachedPositions[newPosition] > this.maxPositionRepetitions)
+            this.maxPositionRepetitions = this.reachedPositions[newPosition];
 
         return prettyMove
     }
@@ -218,8 +229,12 @@ class Battlechess {
         let chess = this.chess;
         if (this.reviewMove)
             chess = this.reviewChess;
-        
+
         return chess._isKingAttacked(color);
+    }
+
+    isDraw() {
+        return this.maxPositionRepetitions >= 3;
     }
 }
 
