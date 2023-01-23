@@ -17,3 +17,7 @@
     font-size: 1.15em;
     font-weight: bold;
 }
+
+.pawnAlignment {
+    transform: translateX(-3px);
+}
