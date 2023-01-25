@@ -117,6 +117,10 @@ class BattleshipSetupBoard extends React.Component {
             let ships = JSON.parse(JSON.stringify(this.state.ships));
             ships[idx].position.x = null;
             ships[idx].position.y = null;
+            if(ships[idx].position.width === 1) {
+                ships[idx].position.width = ships[idx].position.height;
+                ships[idx].position.height = 1;
+            }
             this.setState({
                 ships: ships,
             })
