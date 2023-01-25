@@ -139,3 +139,7 @@
         top: calc(var(--ship-position-y) * var(--battleship-half-square-width));
     }
 }
+
+.fadedPiece {
+    opacity: .6;
+}

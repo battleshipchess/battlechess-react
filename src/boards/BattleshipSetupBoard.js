@@ -113,7 +113,7 @@ class BattleshipSetupBoard extends React.Component {
 
     handleShipReset(e) {
         if (e.dataTransfer.dropEffect === 'none') {
-            var [idx]= e.dataTransfer.getData("text").split(";");
+            var [idx] = e.dataTransfer.getData("text").split(";");
             let ships = JSON.parse(JSON.stringify(this.state.ships));
             ships[idx].position.x = null;
             ships[idx].position.y = null;
@@ -252,6 +252,24 @@ class BattleshipSetupBoard extends React.Component {
         this.props.onBoardSetupCompleted(this.state.ships, gameCode);
     }
 
+    pieceOverlay(x, y) {
+        const pieces = [
+            ['bR','bN','bB','bQ','bK','bB','bN','bR'],
+            ['bP','bP','bP','bP','bP','bP','bP','bP'],
+            ['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],
+            ['wP','wP','wP','wP','wP','wP','wP','wP'],
+            ['wR','wN','wB','wQ','wK','wB','wN','wR'],
+        ]
+        let piece = pieces[y][x];
+        if (!piece.length)
+            return null;
+        let filename = `${process.env.PUBLIC_URL}/pieces/cburnett/${piece}.svg`;
+        return (<div className="chessPieceOverlay fadedPiece" data-piece={piece.charAt(1).toLowerCase} data-piececolor={piece.charAt(0)}>
+            <img src={filename} alt={`${piece}`} />
+        </div>);
+    }
+    
+
     renderStartGameButtons() {
         if (this.isFullyPlaced() && !this.props.gameCode) {
             return [
@@ -298,6 +316,17 @@ class BattleshipSetupBoard extends React.Component {
 
     board() {
         return (<div className="battleship_setup_board" onDrop={this.dropShip} onDragOver={this.allowDrop}>
+            <div className="battleship_board_container">
+                <div className="battleship_board">
+                    {Array.from({ length: this.props.size }, (_, rowIdx) =>
+                        Array.from({ length: this.props.size }, (_, colIdx) =>
+                            <div data-col={colIdx + 1} data-row={rowIdx + 1} key={`${colIdx}${rowIdx}`} >
+                                {this.pieceOverlay(colIdx, rowIdx)}
+                            </div>
+                        )).flat()}
+                </div>
+            </div>
+
             <table>
                 <tbody>
                     {Array.from({ length: this.props.size }, (_, idx) =>
