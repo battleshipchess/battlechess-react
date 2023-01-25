@@ -50,6 +50,7 @@ class BattleshipSetupBoard extends React.Component {
         this.startGame = this.startGame.bind(this);
         this.startPrivateGame = this.startPrivateGame.bind(this);
         this.randomizeShips = this.randomizeShips.bind(this);
+        this.handleShipReset = this.handleShipReset.bind(this);
     }
 
     randomizeSingleShip(ship, ships, maxAttempts) {
@@ -108,6 +109,18 @@ class BattleshipSetupBoard extends React.Component {
         this.setState({
             ships: ships
         })
+    }
+
+    handleShipReset(e) {
+        if (e.dataTransfer.dropEffect === 'none') {
+            var [idx]= e.dataTransfer.getData("text").split(";");
+            let ships = JSON.parse(JSON.stringify(this.state.ships));
+            ships[idx].position.x = null;
+            ships[idx].position.y = null;
+            this.setState({
+                ships: ships,
+            })
+        }
     }
 
     squareWidth() {
@@ -300,6 +313,7 @@ class BattleshipSetupBoard extends React.Component {
                 {this.state.ships.map((ship, idx) =>
                     ship.position.x !== null ? <div className="ship" key={`${idx}`}
                         draggable={true} onDragStart={this.onShipyardDragStart}
+                        onDragEnd={this.handleShipReset}
                         onClick={this.rotateShip}
                         style={{
                             "--ship-position-x": ship.position.x,
