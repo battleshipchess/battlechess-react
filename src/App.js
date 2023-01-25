@@ -134,6 +134,7 @@ class App extends React.Component {
                 opponentLeftoverTime: data.opponentLeftoverTime,
                 lastTimeSync: Date.now(),
                 isOpponentLive: data.isOpponentLive,
+                selectedPiece: null,
             })
         } else {
             if (data.moveHistory.length > 0) {
