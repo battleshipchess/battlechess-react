@@ -88,16 +88,21 @@ function selectedPieceHighlight(x, y, props) {
         x = props.size - x - 1;
         y = props.size - y - 1;
     }
-    if (props.selectedPiece) {
-        if (props.selectedPiece.x === x && props.selectedPiece.y === y) {
+    if (props.selectedPiece && props.selectedPiece.x === x && props.selectedPiece.y === y) {
             return (<div className="selectedPiece" />);
-        }
-        let squareName = square(props.selectedPiece.x, props.selectedPiece.y);
-        let moveOptions = props.chess.moves(squareName);
-        moveOptions = moveOptions.map(move => move.to);
-        if (moveOptions.includes(square(x, y))) {
-            return (<div className="moveOption" />);
-        }
+    }
+    return <div />;
+}
+
+function moveOptionHighlight(x, y, moveOptions, props) {
+    if (props.color === BLACK) {
+        x = props.size - x - 1;
+        y = props.size - y - 1;
+    }
+    if (moveOptions.includes(square(x, y)) && props.chess.get(square(x, y))) {
+        return (<div className="captureOption" />);
+    } else if(moveOptions.includes(square(x, y))) {
+        return (<div className="moveOption" />);
     }
     return <div />;
 }
@@ -162,6 +167,13 @@ function BattleChessboard(props) {
         }
     });
 
+    let moveOptions = [];
+    if(props.selectedPiece) {
+        let squareName = square(props.selectedPiece.x, props.selectedPiece.y);
+        moveOptions = props.chess.moves(squareName);
+        moveOptions = moveOptions.map(move => move.to);
+    }
+
     return (
         <div className="battleship_board_container">
             <div className="battleship_board" onDrop={onDrop} onDragOver={(event) => event.preventDefault()} onClick={selectPiece} ref={boardRef}>
@@ -173,6 +185,7 @@ function BattleChessboard(props) {
                             {selectedPieceHighlight(colIdx, rowIdx, props)}
                             {checkHighlight(colIdx, rowIdx, props)}
                             {pieceOverlay(props, colIdx, rowIdx, selectPiece)}
+                            {moveOptionHighlight(colIdx, rowIdx, moveOptions, props)}
                         </div>
                     )).flat()}
             </div>
