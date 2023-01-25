@@ -30,7 +30,6 @@
 .battleship_setup_board {
     width: var(--battleship-board-width);
     height: var(--battleship-board-width);
-    background-image: url("./board_brown_numbered_smol.svg");
     display: grid;
     margin: 1em;
 }
