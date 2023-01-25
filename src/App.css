@@ -47,12 +47,14 @@
     padding: 2em;
 }
 
-input[type="button"] {
-    padding: 1em;
+    input[type="button"] {
+    padding-block: 1em;
+    padding-inline: 2em;
     font-weight: bold;
     cursor: pointer;
 
-    border-radius: 0px;
+    appearance: none;
+    border-radius: 50px;
     border: 2px solid var(--primary-color);
 
     background-color: white;
