@@ -268,7 +268,7 @@ class BattleshipSetupBoard extends React.Component {
         if (!piece.length)
             return null;
         let filename = `${process.env.PUBLIC_URL}/pieces/cburnett/${piece}.svg`;
-        return (<div className="chessPieceOverlay fadedPiece" data-piece={piece.charAt(1).toLowerCase} data-piececolor={piece.charAt(0)}>
+        return (<div className="chessPieceOverlay fadedPiece">
             <img src={filename} alt={`${piece}`} />
         </div>);
     }

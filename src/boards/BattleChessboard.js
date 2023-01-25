@@ -45,7 +45,7 @@ function pieceOverlay(props, x, y, selectPiece) {
         return null;
     }
     let filename = `${process.env.PUBLIC_URL}/pieces/cburnett/${piece.color}${piece.type.toUpperCase()}.svg`;
-    return (<div className="chessPieceOverlay" draggable="true" data-piece={piece.type} data-piececolor={piece.color} data-square={square(x, y)} data-x={x} data-y={y}
+    return (<div className="chessPieceOverlay" draggable="true" data-piece={piece.type} data-color={piece.color} data-square={square(x, y)} data-x={x} data-y={y}
         onDragStart={(event) => onChessPieceDragStart(event, props)}
         onDragEnd={onChessPieceDragEnd}
         onClick={selectPiece}>
@@ -89,7 +89,7 @@ function selectedPieceHighlight(x, y, props) {
         y = props.size - y - 1;
     }
     if (props.selectedPiece && props.selectedPiece.x === x && props.selectedPiece.y === y) {
-            return (<div className="selectedPiece" />);
+        return (<div className="selectedPiece" />);
     }
     return <div />;
 }
@@ -101,7 +101,7 @@ function moveOptionHighlight(x, y, moveOptions, props) {
     }
     if (moveOptions.includes(square(x, y)) && props.chess.get(square(x, y))) {
         return (<div className="captureOption" />);
-    } else if(moveOptions.includes(square(x, y))) {
+    } else if (moveOptions.includes(square(x, y))) {
         return (<div className="moveOption" />);
     }
     return <div />;
@@ -168,7 +168,7 @@ function BattleChessboard(props) {
     });
 
     let moveOptions = [];
-    if(props.selectedPiece) {
+    if (props.selectedPiece) {
         let squareName = square(props.selectedPiece.x, props.selectedPiece.y);
         moveOptions = props.chess.moves(squareName);
         moveOptions = moveOptions.map(move => move.to);
