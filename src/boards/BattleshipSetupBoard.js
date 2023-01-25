@@ -13,7 +13,7 @@ class BattleshipSetupBoard extends React.Component {
                 shape: 'xxxx',
             },
             {
-                amount: 1,
+                amount: 2,
                 shape: 'xxx',
             },
             {
@@ -21,7 +21,7 @@ class BattleshipSetupBoard extends React.Component {
                 shape: 'xx',
             },
             {
-                amount: 3,
+                amount: 4,
                 shape: 'x',
             },
         ];
@@ -52,41 +52,59 @@ class BattleshipSetupBoard extends React.Component {
         this.randomizeShips = this.randomizeShips.bind(this);
     }
 
-    randomizeShips() {
-        let ships = JSON.parse(JSON.stringify(this.state.ships));
-        let allPlaced = !ships.some(ship => ship.position.x === null || ship.position.y === null);
-        if (allPlaced) {
-            ships.forEach(ship => {
-                ship.position.x = null;
-                ship.position.y = null;
-            });
+    randomizeSingleShip(ship, ships, maxAttempts) {
+        if (ship.position.x !== null && ship.position.y !== null) {
+            return true;
         }
-        ships.forEach(ship => {
-            if (!allPlaced && ship.position.x !== null && ship.position.y !== null) {
-                return;
-            }
-            let done = false;
-            let attempts = 0;
-            let newPosition = {};
-            while (!done) {
-                newPosition.x = Math.floor(Math.random() * this.props.size);
-                newPosition.y = Math.floor(Math.random() * this.props.size);
-                if (Math.random() < .5) {
-                    newPosition.width = ship.position.width;
-                    newPosition.height = ship.position.height;
-                } else {
-                    newPosition.width = ship.position.height;
-                    newPosition.height = ship.position.width;
-                }
 
-                done = this.isDropPositionPossible(ships, newPosition);
-                attempts++;
-                if(attempts > 5000) {
-                    return;
+        let attempts = 0;
+        let newPosition = {};
+        while (attempts++ < maxAttempts) {
+            newPosition.x = Math.floor(Math.random() * this.props.size);
+            newPosition.y = Math.floor(Math.random() * this.props.size);
+            if (Math.random() < .5) {
+                newPosition.width = ship.position.width;
+                newPosition.height = ship.position.height;
+            } else {
+                newPosition.width = ship.position.height;
+                newPosition.height = ship.position.width;
+            }
+
+            if (this.isDropPositionPossible(ships, newPosition)) {
+                ship.position = newPosition;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    randomizeShips() {
+        let ships = null;
+        let allPlaced = !this.state.ships.some(ship => ship.position.x === null || ship.position.y === null);
+        let placementSuccessful = false;
+        let attempts = 0;
+        while (!placementSuccessful) {
+            if (attempts > 10) {
+                break;
+            }
+            attempts++;
+            placementSuccessful = true;
+            ships = JSON.parse(JSON.stringify(this.state.ships));
+            if (allPlaced) {
+                ships.forEach(ship => {
+                    ship.position.x = null;
+                    ship.position.y = null;
+                });
+            }
+
+            for (let ship of ships) {
+                let success = this.randomizeSingleShip(ship, ships, 25);
+                if (!success) {
+                    placementSuccessful = false;
+                    break;
                 }
             }
-            ship.position = newPosition;
-        })
+        }
         this.setState({
             ships: ships
         })
