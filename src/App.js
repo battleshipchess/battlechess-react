@@ -48,6 +48,7 @@ class App extends React.Component {
             board: board,
             gameState: this.states.setup,
             playerId: Cookies.get("playerId"),
+            reconnectAttempts: 0,
         };
 
         this.onMove = this.onMove.bind(this);
@@ -69,6 +70,41 @@ class App extends React.Component {
         this.renderDisconnectedOverlay = AppRender.renderDisconnectedOverlay.bind(this);
     }
 
+    reconnect() {
+        if (this.state.ws) {
+            this.state.ws.close();
+        }
+
+        const ws = new WebSocket(`ws${process.env.NODE_ENV === 'development' ? '' : 's'}://${process.env.REACT_APP_WS_HOST}:${process.env.REACT_APP_WS_PORT}`);
+        ws.addEventListener('message', this.handleMessage);
+        ws.addEventListener('open', () => {
+            this.setState({
+                reconnectAttempts: 0,
+            })
+            ws.send(JSON.stringify({
+                messageType: "QUERY_GAME_STATUS",
+                playerId: this.state.playerId,
+            }))
+        });
+        ws.addEventListener('close', () => {
+            if (this.state.reconnectAttempts > 0) {
+                this.setState({
+                    disconnected: true,
+                })
+            }
+            else {
+                this.reconnect();
+            }
+            this.setState({
+                reconnectAttempts: this.state.reconnectAttempts + 1,
+            })
+        });
+        this.setState({
+            ws: ws,
+        })
+
+    }
+
     componentDidMount() {
         var url = new URL(window.location.href);
         var gameCode = url.searchParams.get("game");
@@ -77,25 +113,8 @@ class App extends React.Component {
                 gameCode: gameCode
             });
         }
-        const ws = new WebSocket(`ws${process.env.NODE_ENV === 'development' ? '' : 's'}://${process.env.REACT_APP_WS_HOST}:${process.env.REACT_APP_WS_PORT}`);
-        ws.addEventListener('message', this.handleMessage);
-        ws.addEventListener('open', () => {
-            ws.send(JSON.stringify({
-                messageType: "QUERY_GAME_STATUS",
-                playerId: this.state.playerId,
-            }))
-        });
-        ws.addEventListener('close', () => {
-            // delay to prevent popup on page reload
-            setTimeout(() => {
-                this.setState({
-                    disconnected: true,
-                })
-            }, 2000);
-        });
-        this.setState({
-            ws: ws,
-        })
+
+        this.reconnect();
 
         document.onkeydown = (e) => {
             if (e.key === 'ArrowLeft') {
@@ -208,8 +227,8 @@ class App extends React.Component {
             }
         });
 
-        if(window.debugBattleshipBoard) {
-            board = window.debugBattleshipBoard;    
+        if (window.debugBattleshipBoard) {
+            board = window.debugBattleshipBoard;
         }
 
         this.setState({
