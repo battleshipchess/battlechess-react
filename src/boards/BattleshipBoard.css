@@ -142,3 +142,31 @@
 .fadedPiece {
     opacity: .6;
 }
+
+.shipError {
+    animation-name: shipErrorAnimation;
+    animation-duration: .5s;
+}
+
+@keyframes shipErrorAnimation {
+    0% {
+        background-color: var(--primary-ship-color-accent);
+        border: 2px solid var(--primary-ship-color);
+    }
+    15% {
+        background-color: var(--primary-ship-error-color-accent);
+        border: 2px solid var(--primary-ship-error-color);
+    }
+    20% { transform: scale(1.05) rotate(3deg); }
+    40% { transform: scale(1.05) rotate(-3deg); }
+    60% { transform: scale(1.05) rotate(3deg); }
+    80% { transform: scale(1.05); }
+    85% {
+        background-color: var(--primary-ship-error-color-accent);
+        border: 2px solid var(--primary-ship-error-color);
+    }
+    100% {
+        background-color: var(--primary-ship-color-accent);
+        border: 2px solid var(--primary-ship-color);
+    }
+}

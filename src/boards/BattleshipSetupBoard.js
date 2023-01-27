@@ -117,7 +117,7 @@ class BattleshipSetupBoard extends React.Component {
             let ships = JSON.parse(JSON.stringify(this.state.ships));
             ships[idx].position.x = null;
             ships[idx].position.y = null;
-            if(ships[idx].position.width === 1) {
+            if (ships[idx].position.width === 1) {
                 ships[idx].position.width = ships[idx].position.height;
                 ships[idx].position.height = 1;
             }
@@ -197,6 +197,18 @@ class BattleshipSetupBoard extends React.Component {
             this.setState({
                 ships: ships,
             })
+        } else {
+            let ships = JSON.parse(JSON.stringify(this.state.ships));
+            ships[idx].error = true;
+            this.setState({
+                ships: ships,
+            })
+            setTimeout(() => {
+                ships[idx].error = null;
+                this.setState({
+                    ships: ships,
+                })
+            }, 500);
         }
     }
 
@@ -228,6 +240,18 @@ class BattleshipSetupBoard extends React.Component {
             this.setState({
                 ships: ships,
             })
+        } else {
+            let ships = JSON.parse(JSON.stringify(this.state.ships));
+            ships[idx].error = true;
+            this.setState({
+                ships: ships,
+            })
+            setTimeout(() => {
+                ships[idx].error = null;
+                this.setState({
+                    ships: ships,
+                })
+            }, 500);
         }
     }
 
@@ -258,11 +282,11 @@ class BattleshipSetupBoard extends React.Component {
 
     pieceOverlay(x, y) {
         const pieces = [
-            ['bR','bN','bB','bQ','bK','bB','bN','bR'],
-            ['bP','bP','bP','bP','bP','bP','bP','bP'],
-            ['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],
-            ['wP','wP','wP','wP','wP','wP','wP','wP'],
-            ['wR','wN','wB','wQ','wK','wB','wN','wR'],
+            ['bR', 'bN', 'bB', 'bQ', 'bK', 'bB', 'bN', 'bR'],
+            ['bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP'],
+            ['', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', ''],
+            ['wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP'],
+            ['wR', 'wN', 'wB', 'wQ', 'wK', 'wB', 'wN', 'wR'],
         ]
         let piece = pieces[y][x];
         if (!piece.length)
@@ -272,7 +296,7 @@ class BattleshipSetupBoard extends React.Component {
             <img src={filename} alt={`${piece}`} />
         </div>);
     }
-    
+
 
     renderStartGameButtons() {
         if (this.isFullyPlaced() && !this.props.gameCode) {
@@ -344,7 +368,7 @@ class BattleshipSetupBoard extends React.Component {
             </table>
             <div className="battleship_drop_target">
                 {this.state.ships.map((ship, idx) =>
-                    ship.position.x !== null ? <div className="ship" key={`${idx}`}
+                    ship.position.x !== null ? <div className={ship.error ? "ship shipError" : "ship"} key={`${idx}`}
                         draggable={true} onDragStart={this.onShipyardDragStart}
                         onDragEnd={this.handleShipReset}
                         onClick={this.rotateShip}
