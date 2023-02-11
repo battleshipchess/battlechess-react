@@ -70,7 +70,7 @@ function GameFooter(props) {
                         CS Student who likes chess
                     </div>
                     <div>
-                        🐛 Encountered an issue? <a href='.'>Report it here!</a>
+                        🐛 Encountered an issue? <a href='https://docs.google.com/forms/d/e/1FAIpQLSdjZ0549F7vNLkBSz__C1ev6Aqsk4YWpfTVaWQbZLTkzp3kNg/viewform?usp=sf_link'>Report it here!</a>
                     </div>
                     <div>
                         💸 <a href='https://www.paypal.com/donate/?hosted_button_id=KTEHDA54Q7CGW'>Support the project</a>
