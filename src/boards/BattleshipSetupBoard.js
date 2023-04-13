@@ -1,5 +1,6 @@
 import React from "react";
 import "./BattleshipBoard.css";
+import "long-press-event";
 
 
 class BattleshipSetupBoard extends React.Component {
@@ -44,13 +45,19 @@ class BattleshipSetupBoard extends React.Component {
             ships: shipState,
         };
 
+        this.shipRefs = [];
+        shipState.forEach(ship => this.shipRefs.push(React.createRef()));
+
         this.onShipyardDragStart = this.onShipyardDragStart.bind(this);
         this.dropShip = this.dropShip.bind(this);
         this.rotateShip = this.rotateShip.bind(this);
         this.startGame = this.startGame.bind(this);
         this.startPrivateGame = this.startPrivateGame.bind(this);
         this.randomizeShips = this.randomizeShips.bind(this);
+        this.randomizeSingleShip = this.randomizeSingleShip.bind(this);
         this.handleShipReset = this.handleShipReset.bind(this);
+        this.showOptions = this.showOptions.bind(this);
+        this.moveShip = this.moveShip.bind(this);
     }
 
     randomizeSingleShip(ship, ships, maxAttempts) {
@@ -182,6 +189,20 @@ class BattleshipSetupBoard extends React.Component {
         return !overlap;
     }
 
+    animateError(shipIdx) {
+        let ships = JSON.parse(JSON.stringify(this.state.ships));
+        ships[shipIdx].error = true;
+        this.setState({
+            ships: ships,
+        })
+        setTimeout(() => {
+            ships[shipIdx].error = null;
+            this.setState({
+                ships: ships,
+            })
+        }, 500);
+    }
+
     rotateShip(event) {
         let ships = JSON.parse(JSON.stringify(this.state.ships));
         let idx = event.target.dataset.idx;
@@ -198,18 +219,45 @@ class BattleshipSetupBoard extends React.Component {
                 ships: ships,
             })
         } else {
-            let ships = JSON.parse(JSON.stringify(this.state.ships));
-            ships[idx].error = true;
-            this.setState({
-                ships: ships,
-            })
-            setTimeout(() => {
-                ships[idx].error = null;
+            this.animateError(idx);
+        }
+    }
+
+    showOptions(event) {
+        event.preventDefault();
+        let ships = JSON.parse(JSON.stringify(this.state.ships));
+        let idx = event.target.dataset.idx;
+        ships.forEach(ship => ship.optionsActive = false);
+        ships[idx].optionsActive = true;
+        this.setState({
+            ships: ships,
+        })
+    }
+
+    moveShip(event) {
+        event.preventDefault();
+        let ships = JSON.parse(JSON.stringify(this.state.ships));
+        let idx = parseInt(event.target.dataset.idx);
+        let dx = parseInt(event.target.dataset.dx);
+        let dy = parseInt(event.target.dataset.dy);
+
+        let position = JSON.parse(JSON.stringify(ships[idx].position));
+        ships[idx].position.x = null;
+        ships[idx].position.y = null;
+
+        for (let i = 0; i < 8; i++) {
+            position.x = position.x + dx;
+            position.y = position.y + dy;
+            if (this.isDropPositionPossible(ships, position)) {
+                ships[idx].position = position;
                 this.setState({
                     ships: ships,
-                })
-            }, 500);
+                });
+                return;
+            }
         }
+
+        this.animateError(idx);
     }
 
     dropShip(event) {
@@ -328,6 +376,14 @@ class BattleshipSetupBoard extends React.Component {
                     {Array.from({ length: shipType.amount }, (_, idx) =>
                         <div className={"ship"} key={idx}
                             draggable={this.state.ships[startIdx + idx].position.x === null} onDragStart={this.onShipyardDragStart}
+                            onClick={() => {
+                                let ships = JSON.parse(JSON.stringify(this.state.ships));
+                                this.randomizeSingleShip(ships[startIdx + idx], ships, 150);
+                                ships.forEach(ship => ship.optionsActive = false);
+                                this.setState({
+                                    ships: ships,
+                                })
+                            }}
                             style={{
                                 "--ship-width": shipType.shape.length,
                                 "--ship-height": 1,
@@ -366,23 +422,69 @@ class BattleshipSetupBoard extends React.Component {
                     )}
                 </tbody>
             </table>
-            <div className="battleship_drop_target">
+            <div className="battleship_drop_target" data-long-press-delay="500">
                 {this.state.ships.map((ship, idx) =>
-                    ship.position.x !== null ? <div className={ship.error ? "ship shipError" : "ship"} key={`${idx}`}
-                        draggable={true} onDragStart={this.onShipyardDragStart}
-                        onDragEnd={this.handleShipReset}
-                        onClick={this.rotateShip}
+                    ship.position.x !== null ? <div key={`${idx}`}
                         style={{
                             "--ship-position-x": ship.position.x,
                             "--ship-position-y": ship.position.y,
                             "--ship-width": ship.position.width,
                             "--ship-height": ship.position.height,
                         }}
-                        data-position="absolute"
-                        data-idx={idx} /> : null
-                ).filter(ship => ship !== null)}
+                    >
+                        <div className={ship.error ? "ship shipError" : "ship"}
+                            ref={this.shipRefs[idx]}
+                            draggable={true} onDragStart={this.onShipyardDragStart}
+                            onDragEnd={this.handleShipReset}
+                            onClick={this.rotateShip}
+                            data-position="absolute"
+                            data-idx={idx} />
+                        {ship.optionsActive ? <div className="shipOptions" style={{
+
+                        }}>
+                            <div style={{
+                                "--ship-option-x": -1,
+                                "--ship-option-y": "calc(0.5 * (var(--ship-height) - 1))",
+                                zIndex: 2,
+                            }} data-direction="left" data-idx={idx} data-dx={-1} data-dy={0} onClick={this.moveShip}></div>
+                            <div style={{
+                                "--ship-option-x": "calc(0.5 * (var(--ship-width) - 1))",
+                                "--ship-option-y": -1,
+                                zIndex: 2,
+                            }} data-direction="up" data-idx={idx} data-dx={0} data-dy={-1} onClick={this.moveShip}></div>
+                            <div style={{
+                                "--ship-option-x": "var(--ship-width)",
+                                "--ship-option-y": "calc(0.5 * (var(--ship-height) - 1))",
+                                zIndex: 2,
+                            }} data-direction="right" data-idx={idx} data-dx={1} data-dy={0} onClick={this.moveShip}></div>
+                            <div style={{
+                                "--ship-option-x": "calc(0.5 * (var(--ship-width) - 1))",
+                                "--ship-option-y": "var(--ship-height)",
+                                zIndex: 2,
+                            }} data-direction="down" data-idx={idx} data-dx={0} data-dy={1} onClick={this.moveShip}></div>
+                            <div style={{
+                                zIndex: 1,
+                                left: 0, top: 0, width: "100%", height: "100%",
+                                position: "absolute",
+                            }} onClick={() => {
+                                let ships = JSON.parse(JSON.stringify(this.state.ships));
+                                ships.forEach(ship => ship.optionsActive = false);
+                                this.setState({ ships: ships });
+                            }} />
+                        </div> : null}
+                    </div> : null
+                ).filter(ship => ship !== null)
+                }
             </div>
-        </div>)
+        </div >)
+    }
+
+    componentDidUpdate() {
+        this.shipRefs.forEach((ref) => {
+            if (!ref.current) return;
+            ref.current.removeEventListener("long-press", this.showOptions);
+            ref.current.addEventListener("long-press", this.showOptions);
+        })
     }
 
     render() {

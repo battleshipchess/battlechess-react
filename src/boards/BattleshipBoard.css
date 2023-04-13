@@ -1,14 +1,14 @@
 :root {
-    --battleship-board-width: calc(100vw - 2em);
-    --battleship-half-board-width: var(--battleship-board-width);
+    --battleship-full-board-width: calc(100vw - 2em);
+    --battleship-half-board-width: min(500px, 40vw);
+    --battleship-board-width: var(--battleship-full-board-width);
     --battleship-board-size: 8;
     --battleship-square-width: calc(var(--battleship-board-width) / var(--battleship-board-size));
-    --battleship-half-square-width: calc(var(--battleship-half-board-width) / var(--battleship-board-size));
 }
 
 @media only screen and (min-width: 600px) {
     :root {
-        --battleship-half-board-width: min(500px, 40vw);
+        --battleship-board-width: var(--battleship-half-board-width);
     }
 }
 
@@ -34,13 +34,6 @@
     margin: 1em;
 }
 
-@media only screen and (min-width: 600px) {
-    .battleship_setup_board {
-        width: var(--battleship-half-board-width);
-        height: var(--battleship-half-board-width);
-    }
-}
-
 .battleship_setup_board>* {
     grid-area: 1 / 1 / 1 / 1;
 }
@@ -50,8 +43,8 @@
 }
 
 .battleship_board {
-    width: var(--battleship-half-board-width);
-    height: var(--battleship-half-board-width);
+    width: var(--battleship-board-width);
+    height: var(--battleship-board-width);
     display: grid;
     grid-template-columns: repeat(8, minmax(0, 1fr));
     grid-template-rows: repeat(8, minmax(0, 1fr));
@@ -117,6 +110,23 @@
     box-sizing: border-box;
 }
 
+.shipOptions {
+    --ship-option-x: 0;
+    --ship-option-y: 0;
+}
+.shipOptions > div {
+    left: calc((var(--ship-position-x) + var(--ship-option-x)) * var(--battleship-square-width));
+    top: calc((var(--ship-position-y) + var(--ship-option-y)) * var(--battleship-square-width));
+    width: var(--battleship-square-width);
+    height: var(--battleship-square-width);
+    box-sizing: border-box;
+    position: absolute;
+}
+.shipOptions > div[data-direction="left"] { background-image: url("./png/move-arrow.png"); transform: rotate(-90deg); background-size: contain;}
+.shipOptions > div[data-direction="up"] { background-image: url("./png/move-arrow.png"); transform: rotate(0deg); background-size: contain; }
+.shipOptions > div[data-direction="right"] { background-image: url("./png/move-arrow.png"); transform: rotate(90deg); background-size: contain; }
+.shipOptions > div[data-direction="down"] { background-image: url("./png/move-arrow.png"); transform: rotate(180deg); background-size: contain; }
+
 .ship[data-position="absolute"] {
     position: absolute;
     left: calc(var(--ship-position-x) * var(--battleship-square-width));
@@ -125,18 +135,6 @@
 
 .shipyard .ship[draggable="false"] {
     opacity: 0.3;
-}
-
-@media only screen and (min-width: 600px) {
-    .ship {
-        width: calc(var(--ship-width) * var(--battleship-half-square-width));
-        height: calc(var(--ship-height) * var(--battleship-half-square-width));
-    }
-
-    .ship[data-position="absolute"] {
-        left: calc(var(--ship-position-x) * var(--battleship-half-square-width));
-        top: calc(var(--ship-position-y) * var(--battleship-half-square-width));
-    }
 }
 
 .fadedPiece {
