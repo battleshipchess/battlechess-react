@@ -57,13 +57,13 @@ function renderWinner() {
             default: ['Looks like you lost. Better luck next time!'],
         }
     }
-    gameOverMessages.win[GAME_OVER_CHESS] = ['The king has been captured and your opponents fleet has scattered in fear! Looks like you\'ve won!'];
-    gameOverMessages.win[GAME_OVER_BATTLESHIP] = ['Your opponents fleet has been sunk! Well played captain!'];
-    gameOverMessages.win[GAME_OVER_TIME_OUT] = ['Looks like time has run out for your opponent. Well played!'];
-    gameOverMessages.win[GAME_OVER_RESIGN] = ['Looks like your opponent has fled the battle! Congratulations, you won!'];
+    gameOverMessages.win[GAME_OVER_CHESS] = ['There\'s no battle without a king. Congratulations, you won!'];
+    gameOverMessages.win[GAME_OVER_BATTLESHIP] = ['Your opponents fleet has been sunk. Well played captain!'];
+    gameOverMessages.win[GAME_OVER_TIME_OUT] = ['Time has run out for your opponent. Well played!'];
+    gameOverMessages.win[GAME_OVER_RESIGN] = ['Your opponent has fled the battle. Congratulations, you won!'];
 
-    gameOverMessages.loss[GAME_OVER_CHESS] = ['Your king has been captured and your army has fled the battle. Better luck next time!'];
-    gameOverMessages.loss[GAME_OVER_BATTLESHIP] = ['Your last ship has been sunk! The battle has been lost, but the war is far from over.'];
+    gameOverMessages.loss[GAME_OVER_CHESS] = ['There\'s no battle without a king. Better luck next time!'];
+    gameOverMessages.loss[GAME_OVER_BATTLESHIP] = ['Your fleet has been sunk. Better luck next time!'];
     gameOverMessages.loss[GAME_OVER_TIME_OUT] = ['Hesitation is the enemy of opportunity. Looks like your time has run out!'];
     gameOverMessages.loss[GAME_OVER_RESIGN] = ['A good general knows when a battle is lost! Time to regroup and return to the fight!'];
 
