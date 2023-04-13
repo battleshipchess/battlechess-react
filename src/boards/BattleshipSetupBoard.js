@@ -214,10 +214,10 @@ class BattleshipSetupBoard extends React.Component {
         ships[idx].position.y = null;
 
         // attempt rotations along all points, not just top left corner
-        for (let yAxis = 0; yAxis < ships[idx].position.height; yAxis++) {
-            for (let xAxis = 0; xAxis < ships[idx].position.width; xAxis++) {
-                for (let yOffset = 0; yOffset < rotatedPosition.height; yOffset++) {
-                    for (let xOffset = 0; xOffset < rotatedPosition.width; xOffset++) {
+        for (let yOffset = 0; yOffset < rotatedPosition.height; yOffset++) {
+            for (let xOffset = 0; xOffset < rotatedPosition.width; xOffset++) {
+                for (let yAxis = 0; yAxis < ships[idx].position.height; yAxis++) {
+                    for (let xAxis = 0; xAxis < ships[idx].position.width; xAxis++) {
                         let position = JSON.parse(JSON.stringify(rotatedPosition));
                         position.x += xAxis - xOffset;
                         position.y += yAxis - yOffset;
