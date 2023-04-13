@@ -36,6 +36,8 @@
 
 .battleship_setup_board>* {
     grid-area: 1 / 1 / 1 / 1;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .battleship_drop_target {
@@ -114,7 +116,8 @@
     --ship-option-x: 0;
     --ship-option-y: 0;
 }
-.shipOptions > div {
+
+.shipOptions>div {
     left: calc((var(--ship-position-x) + var(--ship-option-x)) * var(--battleship-square-width));
     top: calc((var(--ship-position-y) + var(--ship-option-y)) * var(--battleship-square-width));
     width: var(--battleship-square-width);

@@ -236,7 +236,6 @@ class BattleshipSetupBoard extends React.Component {
     }
 
     showOptions(event) {
-        event.preventDefault();
         let ships = JSON.parse(JSON.stringify(this.state.ships));
         let idx = event.target.dataset.idx;
         ships.forEach(ship => ship.optionsActive = false);
@@ -301,17 +300,7 @@ class BattleshipSetupBoard extends React.Component {
                 ships: ships,
             })
         } else {
-            let ships = JSON.parse(JSON.stringify(this.state.ships));
-            ships[idx].error = true;
-            this.setState({
-                ships: ships,
-            })
-            setTimeout(() => {
-                ships[idx].error = null;
-                this.setState({
-                    ships: ships,
-                })
-            }, 500);
+            this.animateError(idx);
         }
     }
 
@@ -434,7 +423,7 @@ class BattleshipSetupBoard extends React.Component {
                     )}
                 </tbody>
             </table>
-            <div className="battleship_drop_target" data-long-press-delay="500">
+            <div className="battleship_drop_target" data-long-press-delay="300">
                 {this.state.ships.map((ship, idx) =>
                     ship.position.x !== null ? <div key={`${idx}`}
                         style={{
