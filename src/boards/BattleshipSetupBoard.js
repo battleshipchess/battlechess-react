@@ -207,20 +207,32 @@ class BattleshipSetupBoard extends React.Component {
         let ships = JSON.parse(JSON.stringify(this.state.ships));
         let idx = event.target.dataset.idx;
 
-        let position = JSON.parse(JSON.stringify(ships[idx].position));
-        position.width = ships[idx].position.height;
-        position.height = ships[idx].position.width;
+        let rotatedPosition = JSON.parse(JSON.stringify(ships[idx].position));
+        rotatedPosition.width = ships[idx].position.height;
+        rotatedPosition.height = ships[idx].position.width;
         ships[idx].position.x = null;
         ships[idx].position.y = null;
 
-        if (this.isDropPositionPossible(ships, position)) {
-            ships[idx].position = position;
-            this.setState({
-                ships: ships,
-            })
-        } else {
-            this.animateError(idx);
+        // attempt rotations along all points, not just top left corner
+        for (let yAxis = 0; yAxis < ships[idx].position.height; yAxis++) {
+            for (let xAxis = 0; xAxis < ships[idx].position.width; xAxis++) {
+                for (let yOffset = 0; yOffset < rotatedPosition.height; yOffset++) {
+                    for (let xOffset = 0; xOffset < rotatedPosition.width; xOffset++) {
+                        let position = JSON.parse(JSON.stringify(rotatedPosition));
+                        position.x += xAxis - xOffset;
+                        position.y += yAxis - yOffset;
+                        if (this.isDropPositionPossible(ships, position)) {
+                            ships[idx].position = position;
+                            this.setState({
+                                ships: ships,
+                            });
+                            return;
+                        }
+                    }
+                }
+            }
         }
+        this.animateError(idx);
     }
 
     showOptions(event) {
