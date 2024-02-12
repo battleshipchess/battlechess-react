@@ -74,8 +74,7 @@ class App extends React.Component {
         if (this.state.ws) {
             this.state.ws.close();
         }
-
-        const ws = new WebSocket(`ws${process.env.NODE_ENV === 'development' ? '' : 's'}://${process.env.REACT_APP_WS_HOST}:${process.env.REACT_APP_WS_PORT}`);
+        const ws = new WebSocket(process.env.REACT_APP_API_URI);
         ws.addEventListener('message', this.handleMessage);
         ws.addEventListener('open', () => {
             this.setState({
