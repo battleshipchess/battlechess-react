@@ -155,6 +155,16 @@ input[type="button"][data-type="disabled"] {
     border: 3px solid black;
     border-radius: .25em;
     padding: .25em;
+    background-color: black;
+    transition-duration: 350ms;
+    transition-delay: 2000ms;
+    transition-property: background-color;
+}
+
+.shareURL> :nth-child(2):hover {
+    background-color: transparent;    
+    transition-delay: 0ms;
+    transition-duration: 150ms;
 }
 
 .copied {
