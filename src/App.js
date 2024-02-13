@@ -268,7 +268,7 @@ class App extends React.Component {
 
     onTimeOut() {
         this.state.ws.send(JSON.stringify({
-            messageType: "QUERY_GAME_STATUS",
+            messageType: "QUERY_TIMEOUT",
             playerId: this.state.playerId,
         }))
     }
