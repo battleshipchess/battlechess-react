@@ -80,6 +80,11 @@ function renderWinner() {
     return <div className="game_result">{messageOptions[messageIdx]}</div>
 }
 
+function renderPermanentGameURL() {
+    let url = "https://battlechess.club/games/" + this.state.playerId;
+    return (<div className="permanent_game_url">Here's a permanent URL to this game: <a href={url}>{url}</a></div>);
+}
+
 function renderGameOver() {
     return (
         <div className="App">
@@ -92,9 +97,27 @@ function renderGameOver() {
             <div className='mainContentVertical'>
                 <NotationPanel chess={this.state.chess} color={this.state.color} reviewMoveDelta={this.reviewMoveDelta} reviewMove={this.reviewMove} />
                 {this.renderWinner()}
+                {this.renderPermanentGameURL()}
                 <div style={{ display: "flex", justifyContent: "center" }}>
                     <input type="button" data-type="primary" value="NEW GAME" onClick={this.resetGame} />
                 </div>
+            </div>
+            <GameFooter />
+        </div>
+    );
+}
+
+function renderArchivedGame() {
+    console.log("asdf");
+    return (
+        <div className="App">
+            <AppHeader message="Battlechess" />
+            <div className='mainContent disabled'>
+                <BattleChessboard chess={this.state.chess} onMove={() => {}} board={this.state.whitePlayerBoard} size={this.size} color={'w'} selectedPiece={null} selectPiece={() => {}} deselectPiece={() => {}} viewMoveIdx={this.state.viewMoveIdx} />
+                <BattleChessboard chess={this.state.chess} onMove={() => {}} board={this.state.blackPlayerBoard} size={this.size} color={'b'} selectedPiece={null} selectPiece={() => {}} deselectPiece={() => {}} viewMoveIdx={this.state.viewMoveIdx} />
+            </div>
+            <div className='mainContentVertical'>
+                <NotationPanel chess={this.state.chess} color={this.state.color} reviewMoveDelta={this.reviewMoveDelta} reviewMove={this.reviewMove} />
             </div>
             <GameFooter />
         </div>
@@ -152,9 +175,11 @@ let AppRender = {
     renderBoardSetup,
     renderGame,
     renderWinner,
+    renderPermanentGameURL,
     renderGameOver,
     renderWaitingForOpponent,
     renderDisconnectedOverlay,
+    renderArchivedGame,
 }
 
 export default AppRender;

@@ -17,6 +17,7 @@ class App extends React.Component {
             opponent_move: "OPPONENT_MOVE",
             making_move: "MAKING_MOVE",
             game_over: "GAME_OVER",
+            archived_game: "ARCHIVED_GAME",
         }
 
         this.boardStates = {
@@ -65,9 +66,11 @@ class App extends React.Component {
         this.renderBoardSetup = AppRender.renderBoardSetup.bind(this);
         this.renderGame = AppRender.renderGame.bind(this);
         this.renderWinner = AppRender.renderWinner.bind(this);
+        this.renderPermanentGameURL = AppRender.renderPermanentGameURL.bind(this);
         this.renderGameOver = AppRender.renderGameOver.bind(this);
         this.renderWaitingForOpponent = AppRender.renderWaitingForOpponent.bind(this);
         this.renderDisconnectedOverlay = AppRender.renderDisconnectedOverlay.bind(this);
+        this.renderArchivedGame = AppRender.renderArchivedGame.bind(this);
     }
 
     reconnect() {
@@ -80,10 +83,18 @@ class App extends React.Component {
             this.setState({
                 reconnectAttempts: 0,
             })
-            ws.send(JSON.stringify({
-                messageType: "QUERY_GAME_STATUS",
-                playerId: this.state.playerId,
-            }))
+            if (this.state.gameState === this.states.archived_game) {
+                ws.send(JSON.stringify({
+                    messageType: "QUERY_ARCHIVED_GAME",
+                    playerId: this.state.playerId,
+                    gameId: this.state.archivedGame,
+                }))
+            } else {
+                ws.send(JSON.stringify({
+                    messageType: "QUERY_GAME_STATUS",
+                    playerId: this.state.playerId,
+                }))
+            }
         });
         ws.addEventListener('close', () => {
             if (this.state.reconnectAttempts > 0) {
@@ -107,10 +118,16 @@ class App extends React.Component {
     componentDidMount() {
         var url = new URL(window.location.href);
         var gameCode = url.searchParams.get("game");
+        var archivedGame = url.searchParams.get("archive");
         if (gameCode) {
             this.setState({
                 gameCode: gameCode
             });
+        } else if (archivedGame) {
+            this.setState({
+                gameState: this.states.archived_game,
+                archivedGame: archivedGame,
+            })
         }
 
         this.reconnect();
@@ -127,7 +144,15 @@ class App extends React.Component {
 
     handleMessage(data) {
         data = JSON.parse(data.data);
-        if (data.messageType === "UPDATE_STATE" && data.state === "WAITING_FOR_OPPONENT") {
+        if (data.messageType === "UPDATE_STATE" && data.state === "ARCHIVED_GAME") {
+            let chess = new Battlechess();
+            chess.loadMoveHistory(data.moveHistory);
+            this.setState({
+                chess: chess,
+                whitePlayerBoard: data.board1,
+                blackPlayerBoard: data.board2,
+            })
+        } else if (data.messageType === "UPDATE_STATE" && data.state === "WAITING_FOR_OPPONENT") {
             this.setState({
                 gameState: this.states.waiting_for_opponent,
                 gameCode: data.gameCode,
@@ -300,7 +325,10 @@ class App extends React.Component {
 
     render() {
         let content = null;
-        if (this.state.gameState === this.states.setup) {
+        if (this.state.gameState === this.states.archived_game) {
+            if (this.state.whitePlayerBoard && this.state.blackPlayerBoard)
+                content = this.renderArchivedGame();
+        } else if (this.state.gameState === this.states.setup) {
             content = this.renderBoardSetup();
         } else if (this.state.gameState === this.states.waiting_for_opponent) {
             content = this.renderWaitingForOpponent();
