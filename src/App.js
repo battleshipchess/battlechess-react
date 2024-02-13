@@ -41,7 +41,7 @@ class App extends React.Component {
         }
 
         if (!Cookies.get("playerId")) {
-            Cookies.set("playerId", Utils.randomId(), { expires: 7 });
+            Cookies.set("playerId", Utils.randomId(), { expires: 1 });
         }
 
         this.state = {
