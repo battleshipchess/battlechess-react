@@ -50,6 +50,7 @@ class App extends React.Component {
             gameState: this.states.setup,
             playerId: Cookies.get("playerId"),
             reconnectAttempts: 0,
+            lastMoveSoundPlayed: null,
         };
 
         this.onMove = this.onMove.bind(this);
@@ -164,7 +165,8 @@ class App extends React.Component {
         } else if (data.messageType === "UPDATE_STATE" && data.state === "GAME_OVER") {
             let chess = new Battlechess();
             chess.loadMoveHistory(data.moveHistory);
-            Utils.playSound(data.state);
+            if (this.state.gameState != this.states.game_over && this.state.lastMoveSoundPlayed !== null)
+                Utils.playSound(data.state);
             this.setState({
                 gameState: this.states.game_over,
                 winner: data.winner,
@@ -180,7 +182,7 @@ class App extends React.Component {
                 selectedPiece: null,
             })
         } else {
-            if (data.moveHistory.length > 0) {
+            if (data.moveHistory.length > 0 && this.state.lastMoveSoundPlayed !== null && data.moveHistory.length != this.state.lastMoveSoundPlayed) {
                 Utils.playSound(data.moveHistory[data.moveHistory.length - 1]);
             }
             let chess = new Battlechess();
@@ -199,6 +201,7 @@ class App extends React.Component {
                 opponentLeftoverTime: data.opponentLeftoverTime,
                 lastTimeSync: Date.now(),
                 isOpponentLive: data.isOpponentLive,
+                lastMoveSoundPlayed: data.moveHistory.length
             })
         }
     }
