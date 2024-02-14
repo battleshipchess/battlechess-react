@@ -81,7 +81,7 @@ function renderWinner() {
 }
 
 function renderPermanentGameURL() {
-    let url = "https://battlechess.club/games/" + this.state.playerId;
+    let url = "https://battlechess.club/?archive=" + this.state.playerId;
     return (<div className="permanent_game_url">Here's a permanent URL to this game: <a href={url}>{url}</a></div>);
 }
 
