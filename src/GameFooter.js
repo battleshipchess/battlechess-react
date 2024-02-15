@@ -76,6 +76,14 @@ function GameFooter(props) {
                         💸 <a href='https://www.paypal.com/donate/?hosted_button_id=KTEHDA54Q7CGW'>Support the project</a>
                     </div>
                 </div>
+                <div className='footerColumn'>
+                    <div>
+                        Attribution
+                    </div>
+                    <div>
+                        ♫ Sounds used: <a href='https://freesound.org/people/leviclaassen/sounds/107786/'>leviclaassen</a> <a href='https://pixabay.com/sound-effects/9mm-pistol-shoot-short-reverb-7152/'>Pixabay</a> <a href='https://pixabay.com/sound-effects/cannon-shot-6153/'>Pixabay</a> <a href='https://pixabay.com/sound-effects/splash-by-blaukreuz-6261/'>Pixabay</a>
+                    </div>
+                </div>
                 {renderCookieConsent()}
             </div>
         </footer>
