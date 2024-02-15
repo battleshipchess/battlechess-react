@@ -183,7 +183,9 @@ class App extends React.Component {
                 selectedPiece: null,
             })
         } else {
-            if (data.moveHistory.length > 0 && this.state.lastMoveSoundPlayed !== null && data.moveHistory.length !== this.state.lastMoveSoundPlayed) {
+            if (this.state.gameState === this.states.waiting_for_opponent) {
+                Utils.playSound("START_GAME");
+            } else if (data.moveHistory.length > 0 && this.state.lastMoveSoundPlayed !== null && data.moveHistory.length !== this.state.lastMoveSoundPlayed) {
                 Utils.playSound(data.moveHistory[data.moveHistory.length - 1]);
             }
             let chess = new Battlechess();

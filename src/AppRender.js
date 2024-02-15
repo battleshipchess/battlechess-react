@@ -177,7 +177,7 @@ function renderResignConfirmationOverlay() {
         <div>
             <div>Are you sure you want to resign from the game</div>
             <input type="button" value="Continue Playing" onClick={() => this.setState({ resignConfirmation: null })} />
-            <input type="button" class="cancel" value="Resign" onClick={this.resign} />
+            <input type="button" className="cancel" value="Resign" onClick={this.resign} />
         </div>
     </div>
 }
