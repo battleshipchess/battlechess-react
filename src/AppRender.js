@@ -40,7 +40,7 @@ function renderGame() {
             <div className='mainContentVertical'>
                 <NotationPanel chess={this.state.chess} color={this.state.color} reviewMoveDelta={this.reviewMoveDelta} reviewMove={this.reviewMove} />
                 <div style={{ display: "flex", justifyContent: "center" }}>
-                    <input type="button" data-type="primary" value="RESIGN" onClick={this.resign} />
+                    <input type="button" data-type="primary" value="RESIGN" onClick={() => this.setState({ resignConfirmation: true })} />
                 </div>
             </div>
             <GameFooter state="rules" />
@@ -113,8 +113,8 @@ function renderArchivedGame() {
         <div className="App">
             <AppHeader message="Battlechess" />
             <div className='mainContent disabled'>
-                <BattleChessboard chess={this.state.chess} onMove={() => {}} board={this.state.whitePlayerBoard} size={this.size} color={'w'} selectedPiece={null} selectPiece={() => {}} deselectPiece={() => {}} viewMoveIdx={this.state.viewMoveIdx} />
-                <BattleChessboard chess={this.state.chess} onMove={() => {}} board={this.state.blackPlayerBoard} size={this.size} color={'b'} selectedPiece={null} selectPiece={() => {}} deselectPiece={() => {}} viewMoveIdx={this.state.viewMoveIdx} />
+                <BattleChessboard chess={this.state.chess} onMove={() => { }} board={this.state.whitePlayerBoard} size={this.size} color={'w'} selectedPiece={null} selectPiece={() => { }} deselectPiece={() => { }} viewMoveIdx={this.state.viewMoveIdx} />
+                <BattleChessboard chess={this.state.chess} onMove={() => { }} board={this.state.blackPlayerBoard} size={this.size} color={'b'} selectedPiece={null} selectPiece={() => { }} deselectPiece={() => { }} viewMoveIdx={this.state.viewMoveIdx} />
             </div>
             <div className='mainContentVertical'>
                 <NotationPanel chess={this.state.chess} color={this.state.color} reviewMoveDelta={this.reviewMoveDelta} reviewMove={this.reviewMove} />
@@ -171,6 +171,17 @@ function renderDisconnectedOverlay() {
     </div>
 }
 
+function renderResignConfirmationOverlay() {
+    document.getElementsByTagName('body')[0].classList.add("noscroll");
+    return <div className='overlayModal'>
+        <div>
+            <div>Are you sure you want to resign from the game</div>
+            <input type="button" value="Continue Playing" onClick={() => this.setState({ resignConfirmation: null })} />
+            <input type="button" class="cancel" value="Resign" onClick={this.resign} />
+        </div>
+    </div>
+}
+
 let AppRender = {
     renderBoardSetup,
     renderGame,
@@ -179,6 +190,7 @@ let AppRender = {
     renderGameOver,
     renderWaitingForOpponent,
     renderDisconnectedOverlay,
+    renderResignConfirmationOverlay,
     renderArchivedGame,
 }
 

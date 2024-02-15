@@ -83,6 +83,11 @@ input[type="button"][data-type="disabled"] {
     cursor: auto;
 }
 
+input[type="button"].cancel {
+    color: var(--cancel-color);
+    border-color: var(--cancel-color);
+}
+
 .faded {
     opacity: .8;
 }

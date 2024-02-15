@@ -71,6 +71,7 @@ class App extends React.Component {
         this.renderGameOver = AppRender.renderGameOver.bind(this);
         this.renderWaitingForOpponent = AppRender.renderWaitingForOpponent.bind(this);
         this.renderDisconnectedOverlay = AppRender.renderDisconnectedOverlay.bind(this);
+        this.renderResignConfirmationOverlay = AppRender.renderResignConfirmationOverlay.bind(this);
         this.renderArchivedGame = AppRender.renderArchivedGame.bind(this);
     }
 
@@ -165,7 +166,7 @@ class App extends React.Component {
         } else if (data.messageType === "UPDATE_STATE" && data.state === "GAME_OVER") {
             let chess = new Battlechess();
             chess.loadMoveHistory(data.moveHistory);
-            if (this.state.gameState != this.states.game_over && this.state.lastMoveSoundPlayed !== null)
+            if (this.state.gameState !== this.states.game_over && this.state.lastMoveSoundPlayed !== null)
                 Utils.playSound(data.state);
             this.setState({
                 gameState: this.states.game_over,
@@ -182,7 +183,7 @@ class App extends React.Component {
                 selectedPiece: null,
             })
         } else {
-            if (data.moveHistory.length > 0 && this.state.lastMoveSoundPlayed !== null && data.moveHistory.length != this.state.lastMoveSoundPlayed) {
+            if (data.moveHistory.length > 0 && this.state.lastMoveSoundPlayed !== null && data.moveHistory.length !== this.state.lastMoveSoundPlayed) {
                 Utils.playSound(data.moveHistory[data.moveHistory.length - 1]);
             }
             let chess = new Battlechess();
@@ -288,6 +289,7 @@ class App extends React.Component {
     }
 
     resign() {
+        this.setState({resignConfirmation: null});
         this.state.ws.send(JSON.stringify({
             messageType: "ABORT",
             playerId: this.state.playerId,
@@ -345,6 +347,12 @@ class App extends React.Component {
             return (<>
                 {content}
                 {this.renderDisconnectedOverlay()}
+            </>);
+        }
+        if (this.state.resignConfirmation) {
+            return (<>
+                {content}
+                {this.renderResignConfirmationOverlay()}
             </>);
         }
         return content;
