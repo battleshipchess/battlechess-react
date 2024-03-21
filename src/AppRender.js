@@ -18,7 +18,7 @@ const GAME_OVER_RESIGN = "resign";
 function renderBoardSetup() {
     return (
         <div className="App">
-            <AppHeader message="Welcome to BattleChess" />
+            <AppHeader message="Welcome to BattleshipChess" />
             <div className='mainContent'>
                 <BattleshipSetupBoard onBoardSetupCompleted={this.onBoardSetupCompleted} size={this.size} gameCode={this.state.gameCode} />
                 <div />
@@ -31,7 +31,7 @@ function renderBoardSetup() {
 function renderGame() {
     return (
         <div className="App">
-            <AppHeader message="BattleChess" />
+            <AppHeader message="BattleshipChess" />
             <div className='mainContent'>
                 <ChessClock leftoverTime={this.state.leftoverTime} opponentLeftoverTime={this.state.opponentLeftoverTime} lastTimeSync={this.state.lastTimeSync} turn={this.state.chess.turn()} color={this.state.color} onTimeOut={this.onTimeOut} isOpponentLive={this.state.isOpponentLive} />
                 <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} size={this.size} color={this.state.color} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} viewMoveIdx={this.state.viewMoveIdx} />
@@ -81,7 +81,7 @@ function renderWinner() {
 }
 
 function renderPermanentGameURL() {
-    let url = "https://battlechess.club/?archive=" + this.state.playerId;
+    let url = "https://battleshipchess.club/?archive=" + this.state.playerId;
     return (<div className="permanent_game_url">Here's a permanent URL to this game: <a href={url}>{url}</a></div>);
 }
 
@@ -111,7 +111,7 @@ function renderArchivedGame() {
     console.log("asdf");
     return (
         <div className="App">
-            <AppHeader message="Battlechess" />
+            <AppHeader message="Battleshipchess" />
             <div className='mainContent disabled'>
                 <BattleChessboard chess={this.state.chess} onMove={() => { }} board={this.state.whitePlayerBoard} size={this.size} color={'w'} selectedPiece={null} selectPiece={() => { }} deselectPiece={() => { }} viewMoveIdx={this.state.viewMoveIdx} />
                 <BattleChessboard chess={this.state.chess} onMove={() => { }} board={this.state.blackPlayerBoard} size={this.size} color={'b'} selectedPiece={null} selectPiece={() => { }} deselectPiece={() => { }} viewMoveIdx={this.state.viewMoveIdx} />
@@ -138,7 +138,7 @@ function renderWaitingForOpponent() {
             </div>
         );
     } else {
-        let url = "https://battlechess.club/?game=" + this.state.gameCode;
+        let url = "https://battleshipchess.club/?game=" + this.state.gameCode;
         return (
             <div className="App">
                 <AppHeader message="Waiting for opponent" />
