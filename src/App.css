@@ -224,7 +224,8 @@ input[type="button"].cancel {
 }
 
 .overlayModal>div {
-    width: min(300px, 80%);
+    min-width: min(300px, 80%);
+    max-width: 80%;
     padding: 2em;
     background-color: white;
     border: 3px solid black;

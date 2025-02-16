@@ -311,10 +311,10 @@ class BattleshipSetupBoard extends React.Component {
         this.props.onBoardSetupCompleted(this.state.ships, this.randomGameCode());
     }
 
-    startStockfishGame() {
+    startStockfishGame(strength) {
         const gameCode = 'stockfish' + this.randomGameCode();
         this.props.onBoardSetupCompleted(this.state.ships, gameCode);
-        startStockfishPlayer(gameCode);
+        startStockfishPlayer(gameCode, strength);
     }
 
     pieceOverlay(x, y) {
@@ -341,7 +341,7 @@ class BattleshipSetupBoard extends React.Component {
             return [
                 <input type="button" data-type={data_type} value="PLAY ONLINE" onClick={this.startGame} key="start" />,
                 <input type="button" data-type={data_type} value="PRIVATE GAME" onClick={this.startPrivateGame} key="startprivate" />,
-                <input type="button" data-type={data_type} value="PLAY VS COMPUTER" onClick={this.startStockfishGame} key="startstockfish" />]
+                <input type="button" data-type={data_type} value="PLAY VS COMPUTER" onClick={() => this.setState({ selectStockfishStrength: true })} key="startstockfish" />]
         }
         return <input type="button" data-type={data_type} value="JOIN GAME" onClick={this.startGame} />
     }
@@ -375,7 +375,7 @@ class BattleshipSetupBoard extends React.Component {
             }
             )}
             {this.renderStartGameButtons()}
-            <input type="button" value="Randomize" onClick={ () => this.setState({ships: BattleshipSetupBoard.randomShips(this.state.ships)}) } />
+            <input type="button" value="Randomize" onClick={() => this.setState({ ships: BattleshipSetupBoard.randomShips(this.state.ships) })} />
         </div>)
     }
 
@@ -468,11 +468,32 @@ class BattleshipSetupBoard extends React.Component {
         })
     }
 
+    renderSelectStockfishStrength() {
+        document.getElementsByTagName('body')[0].classList.add("noscroll");
+        return <div className='overlayModal'>
+            <div>
+                <div>Choose computer strength</div>
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '.25em', flexWrap: 'wrap' }}>
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(strength =>
+                        <input type="button" data-type='primary' style={{ padding: '1em' }} value={strength} key={strength} onClick={() => {
+                            document.getElementsByTagName('body')[0].classList.remove("noscroll");
+                            this.startStockfishGame(strength)
+                        }} />)}
+                </div>
+                <input type="button" value="Cancel" onClick={() => {
+                    document.getElementsByTagName('body')[0].classList.remove("noscroll");
+                    this.setState({ selectStockfishStrength: false })
+                }} />
+            </div>
+        </div>
+    }
+
     render() {
         return (
             <div className="battleship_board_container">
                 {this.shipyard()}
                 {this.board()}
+                {this.state.selectStockfishStrength ? this.renderSelectStockfishStrength() : null}
             </div>
         );
     }

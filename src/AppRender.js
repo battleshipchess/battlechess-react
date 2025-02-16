@@ -167,7 +167,10 @@ function renderDisconnectedOverlay() {
         <div>
             <div>Looks like you've been disconnected from the server</div>
             <input type="button" data-type='primary' value="Click here to reconnect" onClick={() => window.location.reload()} />
-            <input type="button" value="Stay offline" onClick={() => this.setState({disconnected: false})} />
+            <input type="button" value="Stay offline" onClick={() => {
+                document.getElementsByTagName('body')[0].classList.remove("noscroll");
+                this.setState({ disconnected: false })
+            }} />
         </div>
     </div>
 }
@@ -177,8 +180,14 @@ function renderResignConfirmationOverlay() {
     return <div className='overlayModal'>
         <div>
             <div>Are you sure you want to resign from the game</div>
-            <input type="button" value="Continue Playing" onClick={() => this.setState({ resignConfirmation: null })} />
-            <input type="button" className="cancel" value="Resign" onClick={this.resign} />
+            <input type="button" value="Continue Playing" onClick={() => {
+                document.getElementsByTagName('body')[0].classList.remove("noscroll");
+                this.setState({ resignConfirmation: null })
+            }} />
+            <input type="button" className="cancel" value="Resign" onClick={() => {
+                document.getElementsByTagName('body')[0].classList.remove("noscroll");
+                this.resign()
+            }} />
         </div>
     </div>
 }
