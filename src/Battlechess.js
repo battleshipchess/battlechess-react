@@ -116,6 +116,12 @@ class Battlechess {
         for (let halfMoveNumber = 0; halfMoveNumber < halfMoves.length; halfMoveNumber += 2) {
             moves.push(((halfMoveNumber / 2) + 1) + '. ' + [halfMoves[halfMoveNumber], halfMoves[halfMoveNumber + 1]].join(' '));
         }
+        if(moves.length > 0) {
+            moves[moves.length - 1] = moves[moves.length - 1].trim(); // possible trailing ' ' from join if second halfmove is empty
+            if(this.isMate()) {
+                moves[moves.length - 1] += '#';
+            }
+        }
         return moves;
     }
 
@@ -235,6 +241,11 @@ class Battlechess {
 
     isDraw() {
         return this.maxPositionRepetitions >= 3;
+    }
+
+    isMate() {
+        let fen = this.chess.fen().split(" ")[0]
+        return !fen.includes('k') || !fen.includes('K');
     }
 }
 

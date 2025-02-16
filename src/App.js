@@ -17,6 +17,7 @@ class App extends React.Component {
             opponent_move: "OPPONENT_MOVE",
             making_move: "MAKING_MOVE",
             game_over: "GAME_OVER",
+            archived_game: "ARCHIVED_GAME",
         }
 
         this.boardStates = {
@@ -40,7 +41,7 @@ class App extends React.Component {
         }
 
         if (!Cookies.get("playerId")) {
-            Cookies.set("playerId", Utils.randomId(), { expires: 7 });
+            Cookies.set("playerId", Utils.randomId(), { expires: 1 });
         }
 
         this.state = {
@@ -49,6 +50,7 @@ class App extends React.Component {
             gameState: this.states.setup,
             playerId: Cookies.get("playerId"),
             reconnectAttempts: 0,
+            lastMoveSoundPlayed: null,
         };
 
         this.onMove = this.onMove.bind(this);
@@ -65,26 +67,36 @@ class App extends React.Component {
         this.renderBoardSetup = AppRender.renderBoardSetup.bind(this);
         this.renderGame = AppRender.renderGame.bind(this);
         this.renderWinner = AppRender.renderWinner.bind(this);
+        this.renderPermanentGameURL = AppRender.renderPermanentGameURL.bind(this);
         this.renderGameOver = AppRender.renderGameOver.bind(this);
         this.renderWaitingForOpponent = AppRender.renderWaitingForOpponent.bind(this);
         this.renderDisconnectedOverlay = AppRender.renderDisconnectedOverlay.bind(this);
+        this.renderResignConfirmationOverlay = AppRender.renderResignConfirmationOverlay.bind(this);
+        this.renderArchivedGame = AppRender.renderArchivedGame.bind(this);
     }
 
     reconnect() {
         if (this.state.ws) {
             this.state.ws.close();
         }
-
-        const ws = new WebSocket(`ws${process.env.NODE_ENV === 'development' ? '' : 's'}://${process.env.REACT_APP_WS_HOST}:${process.env.REACT_APP_WS_PORT}`);
+        const ws = new WebSocket(process.env.REACT_APP_API_URI);
         ws.addEventListener('message', this.handleMessage);
         ws.addEventListener('open', () => {
             this.setState({
                 reconnectAttempts: 0,
             })
-            ws.send(JSON.stringify({
-                messageType: "QUERY_GAME_STATUS",
-                playerId: this.state.playerId,
-            }))
+            if (this.state.gameState === this.states.archived_game) {
+                ws.send(JSON.stringify({
+                    messageType: "QUERY_ARCHIVED_GAME",
+                    playerId: this.state.playerId,
+                    gameId: this.state.archivedGame,
+                }))
+            } else {
+                ws.send(JSON.stringify({
+                    messageType: "QUERY_GAME_STATUS",
+                    playerId: this.state.playerId,
+                }))
+            }
         });
         ws.addEventListener('close', () => {
             if (this.state.reconnectAttempts > 0) {
@@ -108,10 +120,16 @@ class App extends React.Component {
     componentDidMount() {
         var url = new URL(window.location.href);
         var gameCode = url.searchParams.get("game");
+        var archivedGame = url.searchParams.get("archive");
         if (gameCode) {
             this.setState({
                 gameCode: gameCode
             });
+        } else if (archivedGame) {
+            this.setState({
+                gameState: this.states.archived_game,
+                archivedGame: archivedGame,
+            })
         }
 
         this.reconnect();
@@ -128,7 +146,15 @@ class App extends React.Component {
 
     handleMessage(data) {
         data = JSON.parse(data.data);
-        if (data.messageType === "UPDATE_STATE" && data.state === "WAITING_FOR_OPPONENT") {
+        if (data.messageType === "UPDATE_STATE" && data.state === "ARCHIVED_GAME") {
+            let chess = new Battlechess();
+            chess.loadMoveHistory(data.moveHistory);
+            this.setState({
+                chess: chess,
+                whitePlayerBoard: data.board1,
+                blackPlayerBoard: data.board2,
+            })
+        } else if (data.messageType === "UPDATE_STATE" && data.state === "WAITING_FOR_OPPONENT") {
             this.setState({
                 gameState: this.states.waiting_for_opponent,
                 gameCode: data.gameCode,
@@ -140,7 +166,8 @@ class App extends React.Component {
         } else if (data.messageType === "UPDATE_STATE" && data.state === "GAME_OVER") {
             let chess = new Battlechess();
             chess.loadMoveHistory(data.moveHistory);
-            Utils.playSound(data.state);
+            if (this.state.gameState !== this.states.game_over && this.state.lastMoveSoundPlayed !== null)
+                Utils.playSound(data.state);
             this.setState({
                 gameState: this.states.game_over,
                 winner: data.winner,
@@ -156,7 +183,9 @@ class App extends React.Component {
                 selectedPiece: null,
             })
         } else {
-            if (data.moveHistory.length > 0) {
+            if (this.state.gameState === this.states.waiting_for_opponent) {
+                Utils.playSound("START_GAME");
+            } else if (data.moveHistory.length > 0 && this.state.lastMoveSoundPlayed !== null && data.moveHistory.length !== this.state.lastMoveSoundPlayed) {
                 Utils.playSound(data.moveHistory[data.moveHistory.length - 1]);
             }
             let chess = new Battlechess();
@@ -175,6 +204,7 @@ class App extends React.Component {
                 opponentLeftoverTime: data.opponentLeftoverTime,
                 lastTimeSync: Date.now(),
                 isOpponentLive: data.isOpponentLive,
+                lastMoveSoundPlayed: data.moveHistory.length
             })
         }
     }
@@ -261,6 +291,7 @@ class App extends React.Component {
     }
 
     resign() {
+        this.setState({resignConfirmation: null});
         this.state.ws.send(JSON.stringify({
             messageType: "ABORT",
             playerId: this.state.playerId,
@@ -269,7 +300,7 @@ class App extends React.Component {
 
     onTimeOut() {
         this.state.ws.send(JSON.stringify({
-            messageType: "QUERY_GAME_STATUS",
+            messageType: "QUERY_TIMEOUT",
             playerId: this.state.playerId,
         }))
     }
@@ -301,7 +332,10 @@ class App extends React.Component {
 
     render() {
         let content = null;
-        if (this.state.gameState === this.states.setup) {
+        if (this.state.gameState === this.states.archived_game) {
+            if (this.state.whitePlayerBoard && this.state.blackPlayerBoard)
+                content = this.renderArchivedGame();
+        } else if (this.state.gameState === this.states.setup) {
             content = this.renderBoardSetup();
         } else if (this.state.gameState === this.states.waiting_for_opponent) {
             content = this.renderWaitingForOpponent();
@@ -315,6 +349,12 @@ class App extends React.Component {
             return (<>
                 {content}
                 {this.renderDisconnectedOverlay()}
+            </>);
+        }
+        if (this.state.resignConfirmation) {
+            return (<>
+                {content}
+                {this.renderResignConfirmationOverlay()}
             </>);
         }
         return content;

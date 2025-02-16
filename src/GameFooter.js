@@ -58,7 +58,7 @@ function GameFooter(props) {
                         How to play
                     </div>
                     <div>
-                        You've heard of chess? And you know all about battleship? Then let me introduce you to BattleChess™! You shoot where you move. You keep moving until you miss. That's it. Try not to lose!
+                        You've heard of chess? And you know all about battleship? Then let me introduce you to BattleshipChess™! You shoot where you move. You keep moving until you miss. That's it. Try not to lose!
                     </div>
                 </div>
                 <div className='footerColumn'>
@@ -74,6 +74,14 @@ function GameFooter(props) {
                     </div>
                     <div>
                         💸 <a href='https://www.paypal.com/donate/?hosted_button_id=KTEHDA54Q7CGW'>Support the project</a>
+                    </div>
+                </div>
+                <div className='footerColumn'>
+                    <div>
+                        Attribution
+                    </div>
+                    <div>
+                        ♫ Sounds used: <a href='https://freesound.org/people/leviclaassen/sounds/107786/'>leviclaassen</a> <a href='https://pixabay.com/sound-effects/9mm-pistol-shoot-short-reverb-7152/'>Pixabay</a> <a href='https://pixabay.com/sound-effects/cannon-shot-6153/'>Pixabay</a> <a href='https://pixabay.com/sound-effects/splash-by-blaukreuz-6261/'>Pixabay</a>
                     </div>
                 </div>
                 {renderCookieConsent()}

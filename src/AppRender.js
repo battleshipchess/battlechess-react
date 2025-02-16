@@ -18,7 +18,7 @@ const GAME_OVER_RESIGN = "resign";
 function renderBoardSetup() {
     return (
         <div className="App">
-            <AppHeader message="Welcome to BattleChess" />
+            <AppHeader message="Welcome to BattleshipChess" />
             <div className='mainContent'>
                 <BattleshipSetupBoard onBoardSetupCompleted={this.onBoardSetupCompleted} size={this.size} gameCode={this.state.gameCode} />
                 <div />
@@ -31,7 +31,7 @@ function renderBoardSetup() {
 function renderGame() {
     return (
         <div className="App">
-            <AppHeader message="BattleChess" />
+            <AppHeader message="BattleshipChess" />
             <div className='mainContent'>
                 <ChessClock leftoverTime={this.state.leftoverTime} opponentLeftoverTime={this.state.opponentLeftoverTime} lastTimeSync={this.state.lastTimeSync} turn={this.state.chess.turn()} color={this.state.color} onTimeOut={this.onTimeOut} isOpponentLive={this.state.isOpponentLive} />
                 <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} size={this.size} color={this.state.color} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} viewMoveIdx={this.state.viewMoveIdx} />
@@ -40,7 +40,7 @@ function renderGame() {
             <div className='mainContentVertical'>
                 <NotationPanel chess={this.state.chess} color={this.state.color} reviewMoveDelta={this.reviewMoveDelta} reviewMove={this.reviewMove} />
                 <div style={{ display: "flex", justifyContent: "center" }}>
-                    <input type="button" data-type="primary" value="RESIGN" onClick={this.resign} />
+                    <input type="button" data-type="primary" value="RESIGN" onClick={() => this.setState({ resignConfirmation: true })} />
                 </div>
             </div>
             <GameFooter state="rules" />
@@ -80,6 +80,11 @@ function renderWinner() {
     return <div className="game_result">{messageOptions[messageIdx]}</div>
 }
 
+function renderPermanentGameURL() {
+    let url = "https://battleshipchess.club/?archive=" + this.state.playerId;
+    return (<div className="permanent_game_url">Here's a permanent URL to this game: <a href={url}>{url}</a></div>);
+}
+
 function renderGameOver() {
     return (
         <div className="App">
@@ -92,9 +97,27 @@ function renderGameOver() {
             <div className='mainContentVertical'>
                 <NotationPanel chess={this.state.chess} color={this.state.color} reviewMoveDelta={this.reviewMoveDelta} reviewMove={this.reviewMove} />
                 {this.renderWinner()}
+                {this.renderPermanentGameURL()}
                 <div style={{ display: "flex", justifyContent: "center" }}>
                     <input type="button" data-type="primary" value="NEW GAME" onClick={this.resetGame} />
                 </div>
+            </div>
+            <GameFooter />
+        </div>
+    );
+}
+
+function renderArchivedGame() {
+    console.log("asdf");
+    return (
+        <div className="App">
+            <AppHeader message="Battleshipchess" />
+            <div className='mainContent disabled'>
+                <BattleChessboard chess={this.state.chess} onMove={() => { }} board={this.state.whitePlayerBoard} size={this.size} color={'w'} selectedPiece={null} selectPiece={() => { }} deselectPiece={() => { }} viewMoveIdx={this.state.viewMoveIdx} />
+                <BattleChessboard chess={this.state.chess} onMove={() => { }} board={this.state.blackPlayerBoard} size={this.size} color={'b'} selectedPiece={null} selectPiece={() => { }} deselectPiece={() => { }} viewMoveIdx={this.state.viewMoveIdx} />
+            </div>
+            <div className='mainContentVertical'>
+                <NotationPanel chess={this.state.chess} color={this.state.color} reviewMoveDelta={this.reviewMoveDelta} reviewMove={this.reviewMove} />
             </div>
             <GameFooter />
         </div>
@@ -115,7 +138,7 @@ function renderWaitingForOpponent() {
             </div>
         );
     } else {
-        let url = "https://battlechess.club/?game=" + this.state.gameCode;
+        let url = "https://battleshipchess.club/?game=" + this.state.gameCode;
         return (
             <div className="App">
                 <AppHeader message="Waiting for opponent" />
@@ -148,13 +171,27 @@ function renderDisconnectedOverlay() {
     </div>
 }
 
+function renderResignConfirmationOverlay() {
+    document.getElementsByTagName('body')[0].classList.add("noscroll");
+    return <div className='overlayModal'>
+        <div>
+            <div>Are you sure you want to resign from the game</div>
+            <input type="button" value="Continue Playing" onClick={() => this.setState({ resignConfirmation: null })} />
+            <input type="button" className="cancel" value="Resign" onClick={this.resign} />
+        </div>
+    </div>
+}
+
 let AppRender = {
     renderBoardSetup,
     renderGame,
     renderWinner,
+    renderPermanentGameURL,
     renderGameOver,
     renderWaitingForOpponent,
     renderDisconnectedOverlay,
+    renderResignConfirmationOverlay,
+    renderArchivedGame,
 }
 
 export default AppRender;
