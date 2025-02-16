@@ -47,7 +47,7 @@
     padding: 2em;
 }
 
-    input[type="button"] {
+input[type="button"] {
     padding-block: 1em;
     padding-inline: 2em;
     font-weight: bold;
@@ -72,8 +72,6 @@ input[type="button"][data-type="primary"]:hover {
     background-color: white;
     color: var(--primary-color);
 }
-
-input[type="button"]:hover {}
 
 input[type="button"][data-type="disabled"] {
     font-weight: normal;

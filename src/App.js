@@ -49,7 +49,6 @@ class App extends React.Component {
             board: board,
             gameState: this.states.setup,
             playerId: Cookies.get("playerId"),
-            reconnectAttempts: 0,
             lastMoveSoundPlayed: null,
         };
 
@@ -75,16 +74,13 @@ class App extends React.Component {
         this.renderArchivedGame = AppRender.renderArchivedGame.bind(this);
     }
 
-    reconnect() {
+    reconnect(reconnectAttempts) {
         if (this.state.ws && this.state.ws.readyState === WebSocket.OPEN) {
             this.state.ws.close();
         }
         const ws = new WebSocket(process.env.REACT_APP_API_URI);
         ws.addEventListener('message', this.handleMessage);
         ws.addEventListener('open', () => {
-            this.setState({
-                reconnectAttempts: 0,
-            })
             if (this.state.gameState === this.states.archived_game) {
                 ws.send(JSON.stringify({
                     messageType: "QUERY_ARCHIVED_GAME",
@@ -98,23 +94,21 @@ class App extends React.Component {
                 }))
             }
         });
-        ws.addEventListener('close', () => {
-            if (this.state.reconnectAttempts > 0) {
+        let errorHandler = () => {
+            if (reconnectAttempts <= 0) {
                 this.setState({
                     disconnected: true,
                 })
             }
             else {
-                this.reconnect();
+                this.reconnect(reconnectAttempts - 1);
             }
-            this.setState({
-                reconnectAttempts: this.state.reconnectAttempts + 1,
-            })
-        });
+        };
+        ws.addEventListener('close', errorHandler);
+        ws.addEventListener('error', errorHandler);
         this.setState({
             ws: ws,
         })
-
     }
 
     componentDidMount() {
@@ -132,7 +126,7 @@ class App extends React.Component {
             })
         }
 
-        this.reconnect();
+        this.reconnect(1);
 
         document.onkeydown = (e) => {
             if (e.key === 'ArrowLeft') {

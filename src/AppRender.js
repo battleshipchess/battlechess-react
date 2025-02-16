@@ -166,7 +166,8 @@ function renderDisconnectedOverlay() {
     return <div className='overlayModal'>
         <div>
             <div>Looks like you've been disconnected from the server</div>
-            <input type="button" value="Click here to reconnect" onClick={() => window.location.reload()} />
+            <input type="button" data-type='primary' value="Click here to reconnect" onClick={() => window.location.reload()} />
+            <input type="button" value="Stay offline" onClick={() => this.setState({disconnected: false})} />
         </div>
     </div>
 }
