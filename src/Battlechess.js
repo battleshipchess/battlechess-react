@@ -1,7 +1,4 @@
-import { WHITE } from "chess.js";
-import { BLACK } from "chess.js";
-import { QUEEN } from "chess.js";
-import { Chess } from "chess.js";
+import { Chess, SQUARES, QUEEN, WHITE, BLACK } from "chess.js";
 
 const defaultFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
@@ -223,6 +220,12 @@ class Battlechess {
         return this.chess._moves({ legal: false, square }).map((move) => this.chess._makePretty(move));
     }
 
+    legalMoves(square) {
+        if (this.reviewMove != null)
+            return [];
+        return this.chess._moves({ legal: true, square }).map((move) => this.chess._makePretty(move));
+    }
+
     lastMove() {
         if (this.moveHistory.length === 0)
             return null;
@@ -246,6 +249,17 @@ class Battlechess {
     isMate() {
         let fen = this.chess.fen().split(" ")[0]
         return !fen.includes('k') || !fen.includes('K');
+    }
+
+    takeKing() {
+        for (let square of SQUARES) {
+            for (let move of this.moves(square)) {
+                if (this.get(move.to) && this.get(move.to).type === 'k') {
+                    return move;
+                }
+            }
+        }
+        return null;
     }
 }
 

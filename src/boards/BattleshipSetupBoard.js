@@ -1,6 +1,8 @@
 import React from "react";
 import "./BattleshipBoard.css";
 import "long-press-event";
+import Utils from "../Utils";
+import { startStockfishPlayer } from "../StockfishPlayer";
 
 
 class BattleshipSetupBoard extends React.Component {
@@ -8,27 +10,27 @@ class BattleshipSetupBoard extends React.Component {
     constructor(props) {
         super(props);
 
-        this.ships = [
-            {
-                amount: 1,
-                shape: 'xxxx',
-            },
-            {
-                amount: 2,
-                shape: 'xxx',
-            },
-            {
-                amount: 2,
-                shape: 'xx',
-            },
-            {
-                amount: 4,
-                shape: 'x',
-            },
-        ];
+        this.state = {
+            ships: BattleshipSetupBoard.initShips(),
+        };
 
+        this.shipRefs = [];
+        this.state.ships.forEach(ship => this.shipRefs.push(React.createRef()));
+
+        this.onShipyardDragStart = this.onShipyardDragStart.bind(this);
+        this.dropShip = this.dropShip.bind(this);
+        this.rotateShip = this.rotateShip.bind(this);
+        this.startGame = this.startGame.bind(this);
+        this.startPrivateGame = this.startPrivateGame.bind(this);
+        this.startStockfishGame = this.startStockfishGame.bind(this);
+        this.handleShipReset = this.handleShipReset.bind(this);
+        this.showOptions = this.showOptions.bind(this);
+        this.moveShip = this.moveShip.bind(this);
+    }
+
+    static initShips() {
         let shipState = [];
-        this.ships.forEach(shipType => {
+        Utils.shipShapes.forEach(shipType => {
             for (let i = 0; i < shipType.amount; i++) {
                 shipState.push({
                     position: {
@@ -40,27 +42,10 @@ class BattleshipSetupBoard extends React.Component {
                 });
             }
         })
-
-        this.state = {
-            ships: shipState,
-        };
-
-        this.shipRefs = [];
-        shipState.forEach(ship => this.shipRefs.push(React.createRef()));
-
-        this.onShipyardDragStart = this.onShipyardDragStart.bind(this);
-        this.dropShip = this.dropShip.bind(this);
-        this.rotateShip = this.rotateShip.bind(this);
-        this.startGame = this.startGame.bind(this);
-        this.startPrivateGame = this.startPrivateGame.bind(this);
-        this.randomizeShips = this.randomizeShips.bind(this);
-        this.randomizeSingleShip = this.randomizeSingleShip.bind(this);
-        this.handleShipReset = this.handleShipReset.bind(this);
-        this.showOptions = this.showOptions.bind(this);
-        this.moveShip = this.moveShip.bind(this);
+        return shipState;
     }
 
-    randomizeSingleShip(ship, ships, maxAttempts) {
+    static randomizeSingleShip(ship, ships, maxAttempts) {
         if (ship.position.x !== null && ship.position.y !== null) {
             return true;
         }
@@ -68,8 +53,8 @@ class BattleshipSetupBoard extends React.Component {
         let attempts = 0;
         let newPosition = {};
         while (attempts++ < maxAttempts) {
-            newPosition.x = Math.floor(Math.random() * this.props.size);
-            newPosition.y = Math.floor(Math.random() * this.props.size);
+            newPosition.x = Math.floor(Math.random() * Utils.boardSize);
+            newPosition.y = Math.floor(Math.random() * Utils.boardSize);
             if (Math.random() < .5) {
                 newPosition.width = ship.position.width;
                 newPosition.height = ship.position.height;
@@ -86,9 +71,9 @@ class BattleshipSetupBoard extends React.Component {
         return false;
     }
 
-    randomizeShips() {
+    static randomShips(shipState) {
         let ships = null;
-        let allPlaced = !this.state.ships.some(ship => ship.position.x === null || ship.position.y === null);
+        let allPlaced = !shipState.some(ship => ship.position.x === null || ship.position.y === null);
         let placementSuccessful = false;
         let attempts = 0;
         while (!placementSuccessful) {
@@ -97,7 +82,7 @@ class BattleshipSetupBoard extends React.Component {
             }
             attempts++;
             placementSuccessful = true;
-            ships = JSON.parse(JSON.stringify(this.state.ships));
+            ships = JSON.parse(JSON.stringify(shipState));
             if (allPlaced) {
                 ships.forEach(ship => {
                     ship.position.x = null;
@@ -113,9 +98,7 @@ class BattleshipSetupBoard extends React.Component {
                 }
             }
         }
-        this.setState({
-            ships: ships
-        })
+        return ships;
     }
 
     handleShipReset(e) {
@@ -135,7 +118,7 @@ class BattleshipSetupBoard extends React.Component {
     }
 
     squareWidth() {
-        return document.getElementsByClassName('battleship_setup_board')[0].getBoundingClientRect().width / this.props.size;
+        return document.getElementsByClassName('battleship_setup_board')[0].getBoundingClientRect().width / Utils.boardSize;
     }
 
     onShipyardDragStart(event) {
@@ -151,21 +134,21 @@ class BattleshipSetupBoard extends React.Component {
         event.preventDefault();
     }
 
-    rectOverlap(rect1, rect2) {
+    static rectOverlap(rect1, rect2) {
         return (rect1.x < rect2.x + rect2.width &&
             rect1.x + rect1.width > rect2.x &&
             rect1.y < rect2.y + rect2.height &&
             rect1.y + rect1.height > rect2.y);
     }
 
-    isDropPositionOutOfBounds(position) {
+    static isDropPositionOutOfBounds(position) {
         return (position.x < 0
             || position.y < 0
-            || position.x + position.width > this.props.size
-            || position.y + position.height > this.props.size);
+            || position.x + position.width > Utils.boardSize
+            || position.y + position.height > Utils.boardSize);
     }
 
-    isDropPositionPossible(ships, shipPosition) {
+    static isDropPositionPossible(ships, shipPosition) {
         if (this.isDropPositionOutOfBounds(shipPosition)) {
             return false;
         }
@@ -285,8 +268,8 @@ class BattleshipSetupBoard extends React.Component {
         let xPositionInBoard = event.clientX - bounds.x - xOffset + .5 * this.squareWidth();
         let yPositionInBoard = event.clientY - bounds.y - yOffset + .5 * this.squareWidth();
 
-        let x = Math.floor(xPositionInBoard * this.props.size / bounds.width);
-        let y = Math.floor(yPositionInBoard * this.props.size / bounds.height);
+        let x = Math.floor(xPositionInBoard * Utils.boardSize / bounds.width);
+        let y = Math.floor(yPositionInBoard * Utils.boardSize / bounds.height);
 
         let position = JSON.parse(JSON.stringify(ships[idx].position));
         ships[idx].position.x = null;
@@ -325,8 +308,13 @@ class BattleshipSetupBoard extends React.Component {
     }
 
     startPrivateGame() {
-        let gameCode = this.randomGameCode();
+        this.props.onBoardSetupCompleted(this.state.ships, this.randomGameCode());
+    }
+
+    startStockfishGame() {
+        const gameCode = 'stockfish' + this.randomGameCode();
         this.props.onBoardSetupCompleted(this.state.ships, gameCode);
+        startStockfishPlayer(gameCode);
     }
 
     pieceOverlay(x, y) {
@@ -348,30 +336,22 @@ class BattleshipSetupBoard extends React.Component {
 
 
     renderStartGameButtons() {
-        if (this.isFullyPlaced() && !this.props.gameCode) {
-            return [
-                <input type="button" data-type="primary" value="START GAME" onClick={this.startGame} key="start" />,
-                <input type="button" data-type="primary" value="START PRIVATE GAME" onClick={this.startPrivateGame} key="startprivate" />]
-        } else if (this.isFullyPlaced() && this.props.gameCode) {
-            return <input type="button" data-type="primary" value="JOIN GAME" onClick={this.startGame} />
-        }
-
+        const data_type = this.isFullyPlaced() ? "primary" : "disabled";
         if (!this.props.gameCode) {
             return [
-                <input type="button" data-type="disabled" value="START GAME" key="start" />,
-                <input type="button" data-type="disabled" value="START PRIVATE GAME" key="private" />
-            ];
+                <input type="button" data-type={data_type} value="PLAY ONLINE" onClick={this.startGame} key="start" />,
+                <input type="button" data-type={data_type} value="PRIVATE GAME" onClick={this.startPrivateGame} key="startprivate" />,
+                <input type="button" data-type={data_type} value="PLAY VS COMPUTER" onClick={this.startStockfishGame} key="startstockfish" />]
         }
-        return <input type="button" data-type="disabled" value="JOIN GAME" />
-
+        return <input type="button" data-type={data_type} value="JOIN GAME" onClick={this.startGame} />
     }
 
     shipyard() {
         return (<div className="shipyard">
-            {this.ships.map((shipType, shipTypeIdx) => {
+            {Utils.shipShapes.map((shipType, shipTypeIdx) => {
                 let startIdx = 0;
                 for (let i = 0; i < shipTypeIdx; i++) {
-                    startIdx += this.ships[i].amount;
+                    startIdx += Utils.shipShapes[i].amount;
                 }
                 return <div key={shipType.shape}>
                     {Array.from({ length: shipType.amount }, (_, idx) =>
@@ -395,7 +375,7 @@ class BattleshipSetupBoard extends React.Component {
             }
             )}
             {this.renderStartGameButtons()}
-            <input type="button" value="Randomize" onClick={this.randomizeShips} />
+            <input type="button" value="Randomize" onClick={ () => this.setState({ships: BattleshipSetupBoard.randomShips(this.state.ships)}) } />
         </div>)
     }
 
@@ -403,8 +383,8 @@ class BattleshipSetupBoard extends React.Component {
         return (<div className="battleship_setup_board" onDrop={this.dropShip} onDragOver={this.allowDrop}>
             <div className="battleship_board_container">
                 <div className="battleship_board">
-                    {Array.from({ length: this.props.size }, (_, rowIdx) =>
-                        Array.from({ length: this.props.size }, (_, colIdx) =>
+                    {Array.from({ length: Utils.boardSize }, (_, rowIdx) =>
+                        Array.from({ length: Utils.boardSize }, (_, colIdx) =>
                             <div data-col={colIdx + 1} data-row={rowIdx + 1} key={`${colIdx}${rowIdx}`} >
                                 {this.pieceOverlay(colIdx, rowIdx)}
                             </div>
@@ -414,9 +394,9 @@ class BattleshipSetupBoard extends React.Component {
 
             <table>
                 <tbody>
-                    {Array.from({ length: this.props.size }, (_, idx) =>
+                    {Array.from({ length: Utils.boardSize }, (_, idx) =>
                         <tr key={idx}>
-                            {Array.from({ length: this.props.size }, (_, idx) =>
+                            {Array.from({ length: Utils.boardSize }, (_, idx) =>
                                 <td key={idx} />
                             )}
                         </tr>

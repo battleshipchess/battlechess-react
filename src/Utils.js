@@ -4,6 +4,49 @@ import hitSoundFile from './sounds/9mm-pistol-shoot-short-reverb-7152.mp3';
 import sinkSoundFile from './sounds/cannon-shot-6153-cropped.mp3';
 import startGameSoundFile from './sounds/107786__leviclaassen__beepbeep.wav';
 
+const shipShapes = [
+    {
+        amount: 1,
+        shape: 'xxxx',
+    },
+    {
+        amount: 2,
+        shape: 'xxx',
+    },
+    {
+        amount: 2,
+        shape: 'xx',
+    },
+    {
+        amount: 4,
+        shape: 'x',
+    },
+];
+
+const boardSize = 8;
+
+const gameStates = {
+    setup: "SETUP",
+    waiting_for_opponent: "WAITING",
+    opponent_move: "OPPONENT_MOVE",
+    making_move: "MAKING_MOVE",
+    game_over: "GAME_OVER",
+    archived_game: "ARCHIVED_GAME",
+}
+
+const boardStates = {
+    // not ship
+    empty: ' ',
+    shot: 'x',
+    illegal: 'i',
+
+    // ship
+    ship: 's',
+    hit: '+',
+    sunk: '#',
+}
+
+
 function randomId() {
     const dateString = Date.now().toString(36);
     const randomness = Math.random().toString(36).substring(2);
@@ -42,6 +85,10 @@ let Utils = {
     randomId,
     playSound,
     copyToClipboard,
+    shipShapes,
+    boardSize,
+    gameStates,
+    boardStates,
 }
 
 export default Utils

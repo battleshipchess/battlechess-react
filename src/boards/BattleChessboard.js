@@ -3,10 +3,11 @@ import { BLACK } from 'chess.js';
 import { useEffect, useRef } from 'react';
 import "./BattleshipBoard.css";
 import "./Chessboard.css";
+import Utils from '../Utils';
 
 function getContent(props, colIdx, rowIdx) {
     if (props.color === BLACK) {
-        return props.board[props.size - colIdx - 1][props.size - rowIdx - 1];
+        return props.board[Utils.boardSize - colIdx - 1][Utils.boardSize - rowIdx - 1];
     }
     return props.board[colIdx][rowIdx];
 }
@@ -37,8 +38,8 @@ function onChessPieceDragEnd(event) {
 
 function pieceOverlay(props, x, y, selectPiece) {
     if (props.color === BLACK) {
-        x = props.size - x - 1;
-        y = props.size - y - 1;
+        x = Utils.boardSize - x - 1;
+        y = Utils.boardSize - y - 1;
     }
     let piece = props.chess.get(square(x, y));
     if (!piece) {
@@ -59,8 +60,8 @@ function shipOverlay(content) {
 
 function lastMoveHighlight(x, y, props) {
     if (props.color === BLACK) {
-        x = props.size - x - 1;
-        y = props.size - y - 1;
+        x = Utils.boardSize - x - 1;
+        y = Utils.boardSize - y - 1;
     }
     let lastMove = props.chess.lastMove();
     if (lastMove != null && lastMove.from === square(x, y)) {
@@ -73,8 +74,8 @@ function lastMoveHighlight(x, y, props) {
 
 function checkHighlight(x, y, props) {
     if (props.color === BLACK) {
-        x = props.size - x - 1;
-        y = props.size - y - 1;
+        x = Utils.boardSize - x - 1;
+        y = Utils.boardSize - y - 1;
     }
     let piece = props.chess.get(square(x, y));
     if (piece.type === KING && props.chess.inCheck(piece.color)) {
@@ -85,8 +86,8 @@ function checkHighlight(x, y, props) {
 
 function selectedPieceHighlight(x, y, props) {
     if (props.color === BLACK) {
-        x = props.size - x - 1;
-        y = props.size - y - 1;
+        x = Utils.boardSize - x - 1;
+        y = Utils.boardSize - y - 1;
     }
     if (props.selectedPiece && props.selectedPiece.x === x && props.selectedPiece.y === y) {
         return (<div className="selectedPiece" />);
@@ -96,8 +97,8 @@ function selectedPieceHighlight(x, y, props) {
 
 function moveOptionHighlight(x, y, moveOptions, props) {
     if (props.color === BLACK) {
-        x = props.size - x - 1;
-        y = props.size - y - 1;
+        x = Utils.boardSize - x - 1;
+        y = Utils.boardSize - y - 1;
     }
     if (moveOptions.includes(square(x, y)) && props.chess.get(square(x, y))) {
         return (<div className="captureOption" />);
@@ -129,7 +130,7 @@ function BattleChessboard(props) {
     let onDrop = (event) => {
         event.preventDefault();
 
-        let [x, y] = calculateCoordinates(event, props.color, props.size);
+        let [x, y] = calculateCoordinates(event, props.color, Utils.boardSize);
 
         props.onMove(event.dataTransfer.getData("text"), square(x, y));
     }
@@ -137,7 +138,7 @@ function BattleChessboard(props) {
     let selectPiece = (event) => {
         event.stopPropagation();
 
-        let [x, y] = calculateCoordinates(event, props.color, props.size);
+        let [x, y] = calculateCoordinates(event, props.color, Utils.boardSize);
 
         let piece = props.chess.get(square(x, y));
         if (piece && piece.color === props.color) {
@@ -177,8 +178,8 @@ function BattleChessboard(props) {
     return (
         <div className="battleship_board_container">
             <div className="battleship_board" onDrop={onDrop} onDragOver={(event) => event.preventDefault()} onClick={selectPiece} ref={boardRef}>
-                {Array.from({ length: props.size }, (_, rowIdx) =>
-                    Array.from({ length: props.size }, (_, colIdx) =>
+                {Array.from({ length: Utils.boardSize }, (_, rowIdx) =>
+                    Array.from({ length: Utils.boardSize }, (_, colIdx) =>
                         <div data-col={colIdx + 1} data-row={rowIdx + 1} key={`${colIdx}${rowIdx}`} >
                             {lastMoveHighlight(colIdx, rowIdx, props)}
                             {shipOverlay(getContent(props, colIdx, rowIdx))}

@@ -9,34 +9,11 @@ class App extends React.Component {
     constructor(props) {
         super(props);
 
-        this.size = 8;
-
-        this.states = {
-            setup: "SETUP",
-            waiting_for_opponent: "WAITING",
-            opponent_move: "OPPONENT_MOVE",
-            making_move: "MAKING_MOVE",
-            game_over: "GAME_OVER",
-            archived_game: "ARCHIVED_GAME",
-        }
-
-        this.boardStates = {
-            // not ship
-            empty: ' ',
-            shot: 'x',
-            illegal: 'i',
-
-            // ship
-            ship: 's',
-            hit: '+',
-            sunk: '#',
-        }
-
         let board = [];
-        for (let x = 0; x < this.size; x++) {
+        for (let x = 0; x < Utils.boardSize; x++) {
             board.push([]);
-            for (let y = 0; y < this.size; y++) {
-                board[x].push(this.boardStates.empty);
+            for (let y = 0; y < Utils.boardSize; y++) {
+                board[x].push(Utils.boardStates.empty);
             }
         }
 
@@ -47,7 +24,7 @@ class App extends React.Component {
         this.state = {
             chess: new Battlechess(),
             board: board,
-            gameState: this.states.setup,
+            gameState: Utils.gameStates.setup,
             playerId: Cookies.get("playerId"),
             lastMoveSoundPlayed: null,
         };
@@ -81,7 +58,7 @@ class App extends React.Component {
         const ws = new WebSocket(process.env.REACT_APP_API_URI);
         ws.addEventListener('message', this.handleMessage);
         ws.addEventListener('open', () => {
-            if (this.state.gameState === this.states.archived_game) {
+            if (this.state.gameState === Utils.gameStates.archived_game) {
                 ws.send(JSON.stringify({
                     messageType: "QUERY_ARCHIVED_GAME",
                     playerId: this.state.playerId,
@@ -121,7 +98,7 @@ class App extends React.Component {
             });
         } else if (archivedGame) {
             this.setState({
-                gameState: this.states.archived_game,
+                gameState: Utils.gameStates.archived_game,
                 archivedGame: archivedGame,
             })
         }
@@ -150,20 +127,20 @@ class App extends React.Component {
             })
         } else if (data.messageType === "UPDATE_STATE" && data.state === "WAITING_FOR_OPPONENT") {
             this.setState({
-                gameState: this.states.waiting_for_opponent,
+                gameState: Utils.gameStates.waiting_for_opponent,
                 gameCode: data.gameCode,
             })
         } else if (data.messageType === "UPDATE_STATE" && data.state === "IDLE") {
             this.setState({
-                gameState: this.states.setup,
+                gameState: Utils.gameStates.setup,
             })
         } else if (data.messageType === "UPDATE_STATE" && data.state === "GAME_OVER") {
             let chess = new Battlechess();
             chess.loadMoveHistory(data.moveHistory);
-            if (this.state.gameState !== this.states.game_over && this.state.lastMoveSoundPlayed !== null)
+            if (this.state.gameState !== Utils.gameStates.game_over && this.state.lastMoveSoundPlayed !== null)
                 Utils.playSound(data.state);
             this.setState({
-                gameState: this.states.game_over,
+                gameState: Utils.gameStates.game_over,
                 winner: data.winner,
                 winCondition: data.winCondition,
                 chess: chess,
@@ -177,16 +154,16 @@ class App extends React.Component {
                 selectedPiece: null,
             })
         } else {
-            if (this.state.gameState === this.states.waiting_for_opponent) {
+            if (this.state.gameState === Utils.gameStates.waiting_for_opponent) {
                 Utils.playSound("START_GAME");
             } else if (data.moveHistory.length > 0 && this.state.lastMoveSoundPlayed !== null && data.moveHistory.length !== this.state.lastMoveSoundPlayed) {
                 Utils.playSound(data.moveHistory[data.moveHistory.length - 1]);
             }
             let chess = new Battlechess();
             chess.loadMoveHistory(data.moveHistory);
-            let gameState = this.states.making_move;
+            let gameState = Utils.gameStates.making_move;
             if (chess.turn() !== data.color) {
-                gameState = this.states.opponent_move;
+                gameState = Utils.gameStates.opponent_move;
             }
             this.setState({
                 chess: chess,
@@ -246,7 +223,7 @@ class App extends React.Component {
         ships.forEach(ship => {
             for (let x = ship.position.x; x < ship.position.x + ship.position.width; x++) {
                 for (let y = ship.position.y; y < ship.position.y + ship.position.height; y++) {
-                    board[x][y] = this.boardStates.ship;
+                    board[x][y] = Utils.boardStates.ship;
                 }
             }
         });
@@ -264,7 +241,7 @@ class App extends React.Component {
         
         this.setState({
             board: board,
-            gameState: this.states.waiting_for_opponent,
+            gameState: Utils.gameStates.waiting_for_opponent,
             gameCode: gameCode,
         })
     }
@@ -322,14 +299,14 @@ class App extends React.Component {
 
     render() {
         let content = null;
-        if (this.state.gameState === this.states.archived_game) {
+        if (this.state.gameState === Utils.gameStates.archived_game) {
             if (this.state.whitePlayerBoard && this.state.blackPlayerBoard)
                 content = this.renderArchivedGame();
-        } else if (this.state.gameState === this.states.setup) {
+        } else if (this.state.gameState === Utils.gameStates.setup) {
             content = this.renderBoardSetup();
-        } else if (this.state.gameState === this.states.waiting_for_opponent) {
+        } else if (this.state.gameState === Utils.gameStates.waiting_for_opponent) {
             content = this.renderWaitingForOpponent();
-        } else if (this.state.gameState === this.states.game_over) {
+        } else if (this.state.gameState === Utils.gameStates.game_over) {
             content = this.renderGameOver();
         } else {
             content = this.renderGame();

@@ -20,7 +20,7 @@ function renderBoardSetup() {
         <div className="App">
             <AppHeader message="Welcome to BattleshipChess" />
             <div className='mainContent'>
-                <BattleshipSetupBoard onBoardSetupCompleted={this.onBoardSetupCompleted} size={this.size} gameCode={this.state.gameCode} />
+                <BattleshipSetupBoard onBoardSetupCompleted={this.onBoardSetupCompleted} gameCode={this.state.gameCode} />
                 <div />
             </div>
             <GameFooter />
@@ -34,8 +34,8 @@ function renderGame() {
             <AppHeader message="BattleshipChess" />
             <div className='mainContent'>
                 <ChessClock leftoverTime={this.state.leftoverTime} opponentLeftoverTime={this.state.opponentLeftoverTime} lastTimeSync={this.state.lastTimeSync} turn={this.state.chess.turn()} color={this.state.color} onTimeOut={this.onTimeOut} isOpponentLive={this.state.isOpponentLive} />
-                <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} size={this.size} color={this.state.color} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} viewMoveIdx={this.state.viewMoveIdx} />
-                <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} viewMoveIdx={this.state.viewMoveIdx} />
+                <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} color={this.state.color} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} viewMoveIdx={this.state.viewMoveIdx} />
+                <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} color={this.state.color} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} viewMoveIdx={this.state.viewMoveIdx} />
             </div>
             <div className='mainContentVertical'>
                 <NotationPanel chess={this.state.chess} color={this.state.color} reviewMoveDelta={this.reviewMoveDelta} reviewMove={this.reviewMove} />
@@ -91,8 +91,8 @@ function renderGameOver() {
             <AppHeader message="Game Over" state="game_over" />
             <div className='mainContent faded disabled'>
                 <ChessClock leftoverTime={this.state.leftoverTime} opponentLeftoverTime={this.state.opponentLeftoverTime} lastTimeSync={this.state.lastTimeSync} turn={null} color={this.state.color} onTimeOut={this.onTimeOut} isOpponentLive={this.state.isOpponentLive} />
-                <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} size={this.size} color={this.state.color} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} viewMoveIdx={this.state.viewMoveIdx} />
-                <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} size={this.size} color={this.state.color} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} viewMoveIdx={this.state.viewMoveIdx} />
+                <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.board} color={this.state.color} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} viewMoveIdx={this.state.viewMoveIdx} />
+                <BattleChessboard chess={this.state.chess} onMove={this.onMove} board={this.state.opponentBoard} color={this.state.color} selectedPiece={this.state.selectedPiece} selectPiece={this.selectPiece} deselectPiece={this.deselectPiece} viewMoveIdx={this.state.viewMoveIdx} />
             </div>
             <div className='mainContentVertical'>
                 <NotationPanel chess={this.state.chess} color={this.state.color} reviewMoveDelta={this.reviewMoveDelta} reviewMove={this.reviewMove} />
@@ -113,8 +113,8 @@ function renderArchivedGame() {
         <div className="App">
             <AppHeader message="Battleshipchess" />
             <div className='mainContent disabled'>
-                <BattleChessboard chess={this.state.chess} onMove={() => { }} board={this.state.whitePlayerBoard} size={this.size} color={'w'} selectedPiece={null} selectPiece={() => { }} deselectPiece={() => { }} viewMoveIdx={this.state.viewMoveIdx} />
-                <BattleChessboard chess={this.state.chess} onMove={() => { }} board={this.state.blackPlayerBoard} size={this.size} color={'b'} selectedPiece={null} selectPiece={() => { }} deselectPiece={() => { }} viewMoveIdx={this.state.viewMoveIdx} />
+                <BattleChessboard chess={this.state.chess} onMove={() => { }} board={this.state.whitePlayerBoard} color={'w'} selectedPiece={null} selectPiece={() => { }} deselectPiece={() => { }} viewMoveIdx={this.state.viewMoveIdx} />
+                <BattleChessboard chess={this.state.chess} onMove={() => { }} board={this.state.blackPlayerBoard} color={'b'} selectedPiece={null} selectPiece={() => { }} deselectPiece={() => { }} viewMoveIdx={this.state.viewMoveIdx} />
             </div>
             <div className='mainContentVertical'>
                 <NotationPanel chess={this.state.chess} color={this.state.color} reviewMoveDelta={this.reviewMoveDelta} reviewMove={this.reviewMove} />
