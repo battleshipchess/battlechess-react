@@ -1,4 +1,4 @@
-import { Chess, SQUARES, QUEEN, WHITE, BLACK } from "chess.js";
+import { Chess, SQUARES, QUEEN, WHITE, BLACK, KING } from "chess.js";
 
 const defaultFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
@@ -173,6 +173,20 @@ class Battlechess {
         return newFen.join(" ");
     }
 
+    disableCastling(fen, color) {
+        let newFen = fen.split(" ");
+        let castling = newFen[2];
+        if (color === WHITE) {
+            castling = castling.replace('K', '');
+            castling = castling.replace('Q', '');
+        } else {
+            castling = castling.replace('k', '');
+            castling = castling.replace('q', '');
+        }
+        newFen[2] = castling;
+        return newFen.join(" ");
+    }
+
     move(from, to, hitFlags) {
         let moveObj = this.findMatchingMove(from, to, this.chess);
         if (!moveObj)
@@ -184,6 +198,11 @@ class Battlechess {
         this.chess._makeMove(moveObj);
 
         let newFen = this.modifyFenOnHit(hitFlags, this.chess.fen());
+        if (moveObj.captured === KING) {
+            // disable castling because chess library only checks for rooks that are taken, not kings
+            // which leads to an error when moves() is called later
+            newFen = this.disableCastling(newFen, this.chess.turn());
+        }
         let newPosition = newFen.split(" ").slice(0, 4).join(" ");
         this.chess = new Chess(newFen);
 
