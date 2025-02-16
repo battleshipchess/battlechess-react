@@ -243,7 +243,8 @@ class Battlechess {
     }
 
     isDraw() {
-        return this.maxPositionRepetitions >= 3;
+        let stalemate = this.moves().length === 0 && !this.inCheck(this.turn());
+        return this.maxPositionRepetitions >= 3 || stalemate;
     }
 
     isMate() {
