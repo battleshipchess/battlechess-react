@@ -76,7 +76,7 @@ class App extends React.Component {
     }
 
     reconnect() {
-        if (this.state.ws) {
+        if (this.state.ws && this.state.ws.readyState === WebSocket.OPEN) {
             this.state.ws.close();
         }
         const ws = new WebSocket(process.env.REACT_APP_API_URI);
@@ -261,19 +261,15 @@ class App extends React.Component {
             board = window.debugBattleshipBoard;
         }
 
-        this.setState({
-            board: board,
-            gameState: this.states.waiting_for_opponent,
-        })
-
         this.state.ws.send(JSON.stringify({
             messageType: "START_GAME",
             playerId: this.state.playerId,
             board: board,
             gameCode: gameCode,
         }));
-
+        
         this.setState({
+            board: board,
             gameState: this.states.waiting_for_opponent,
             gameCode: gameCode,
         })
@@ -281,7 +277,7 @@ class App extends React.Component {
 
     resetGame() {
         Cookies.set("playerId", Utils.randomId(), { expires: 7 });
-        if (this.state.ws) {
+        if (this.state.ws && this.state.ws.readyState === WebSocket.OPEN) {
             this.state.ws.send(JSON.stringify({
                 messageType: "ABORT",
                 playerId: this.state.playerId,
