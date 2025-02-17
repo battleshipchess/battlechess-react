@@ -15,6 +15,8 @@ function NotationPanel(props) {
     return <div className='notationPanel'>
         {moves.length ?
             <div className='previousMove' onClick={() => props.reviewMoveDelta(-1)}><img src={nextMoveSvg} width={1} height={1} alt="previous move" /></div> : null}
+        {moves.length ?
+            <div className='nextMove' onClick={() => props.reviewMoveDelta(1)}><img src={nextMoveSvg} width={1} height={1} alt="next move" /></div> : null}
         {moves.map(move => {
             let style = {};
             if (moveIdx <= highlightedMove && moveIdx + subMoves(move) > highlightedMove) {
@@ -26,8 +28,6 @@ function NotationPanel(props) {
             moveIdx += subMoves(move);
             return <span key={move} style={style} onClick={() => {props.reviewMove(curMoveIdx)}}>{move}</span>
         })}
-        {moves.length ?
-            <div className='nextMove' onClick={() => props.reviewMoveDelta(1)}><img src={nextMoveSvg} width={1} height={1} alt="next move" /></div> : null}
     </div>;
 }
 
