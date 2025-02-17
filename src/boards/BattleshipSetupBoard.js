@@ -63,7 +63,7 @@ class BattleshipSetupBoard extends React.Component {
                 newPosition.height = ship.position.width;
             }
 
-            if (this.isDropPositionPossible(ships, newPosition)) {
+            if (BattleshipSetupBoard.isDropPositionPossible(ships, newPosition)) {
                 ship.position = newPosition;
                 return true;
             }
@@ -91,7 +91,7 @@ class BattleshipSetupBoard extends React.Component {
             }
 
             for (let ship of ships) {
-                let success = this.randomizeSingleShip(ship, ships, 25);
+                let success = BattleshipSetupBoard.randomizeSingleShip(ship, ships, 25);
                 if (!success) {
                     placementSuccessful = false;
                     break;
@@ -103,7 +103,8 @@ class BattleshipSetupBoard extends React.Component {
 
     handleShipReset(e) {
         if (e.dataTransfer.dropEffect === 'none') {
-            var [idx] = e.dataTransfer.getData("text").split(";");
+            var [idx] = this.currentDragData.split(";");
+            this.currentDragData = null;
             let ships = JSON.parse(JSON.stringify(this.state.ships));
             ships[idx].position.x = null;
             ships[idx].position.y = null;
@@ -126,7 +127,8 @@ class BattleshipSetupBoard extends React.Component {
         let xPositionInShip = event.clientX - bounds.x;
         let yPositionInShip = event.clientY - bounds.y;
 
-        event.dataTransfer.setData("text", `${event.target.dataset.idx};${xPositionInShip};${yPositionInShip}`);
+        this.currentDragData = `${event.target.dataset.idx};${xPositionInShip};${yPositionInShip}`
+        this.showOptions(null);
         event.dataTransfer.dropEffect = "move";
     }
 
@@ -149,7 +151,7 @@ class BattleshipSetupBoard extends React.Component {
     }
 
     static isDropPositionPossible(ships, shipPosition) {
-        if (this.isDropPositionOutOfBounds(shipPosition)) {
+        if (BattleshipSetupBoard.isDropPositionOutOfBounds(shipPosition)) {
             return false;
         }
 
@@ -164,7 +166,7 @@ class BattleshipSetupBoard extends React.Component {
 
         ships.forEach(ship => {
             if (ship.position.x === null) return;
-            if (this.rectOverlap(ship.position, illegalBox)) {
+            if (BattleshipSetupBoard.rectOverlap(ship.position, illegalBox)) {
                 overlap = true;
             }
         });
@@ -204,7 +206,7 @@ class BattleshipSetupBoard extends React.Component {
                         let position = JSON.parse(JSON.stringify(rotatedPosition));
                         position.x += xAxis - xOffset;
                         position.y += yAxis - yOffset;
-                        if (this.isDropPositionPossible(ships, position)) {
+                        if (BattleshipSetupBoard.isDropPositionPossible(ships, position)) {
                             ships[idx].position = position;
                             this.setState({
                                 ships: ships,
@@ -220,9 +222,10 @@ class BattleshipSetupBoard extends React.Component {
 
     showOptions(event) {
         let ships = JSON.parse(JSON.stringify(this.state.ships));
-        let idx = event.target.dataset.idx;
         ships.forEach(ship => ship.optionsActive = false);
-        ships[idx].optionsActive = true;
+        if (event && !this.currentDragData) {
+            ships[event.target.dataset.idx].optionsActive = true;
+        }
         this.setState({
             ships: ships,
         })
@@ -242,7 +245,7 @@ class BattleshipSetupBoard extends React.Component {
         for (let i = 0; i < 8; i++) {
             position.x = position.x + dx;
             position.y = position.y + dy;
-            if (this.isDropPositionPossible(ships, position)) {
+            if (BattleshipSetupBoard.isDropPositionPossible(ships, position)) {
                 ships[idx].position = position;
                 this.setState({
                     ships: ships,
@@ -261,7 +264,8 @@ class BattleshipSetupBoard extends React.Component {
         }
 
         event.preventDefault();
-        var [idx, xOffset, yOffset] = event.dataTransfer.getData("text").split(";");
+        var [idx, xOffset, yOffset] = this.currentDragData.split(";");
+        this.currentDragData = null;
         let ships = JSON.parse(JSON.stringify(this.state.ships));
 
         let bounds = gridElement.getBoundingClientRect();
@@ -277,7 +281,7 @@ class BattleshipSetupBoard extends React.Component {
         position.x = x;
         position.y = y;
 
-        if (this.isDropPositionPossible(ships, position)) {
+        if (BattleshipSetupBoard.isDropPositionPossible(ships, position)) {
             ships[idx].position = position
             this.setState({
                 ships: ships,
@@ -359,7 +363,7 @@ class BattleshipSetupBoard extends React.Component {
                             draggable={this.state.ships[startIdx + idx].position.x === null} onDragStart={this.onShipyardDragStart}
                             onClick={() => {
                                 let ships = JSON.parse(JSON.stringify(this.state.ships));
-                                this.randomizeSingleShip(ships[startIdx + idx], ships, 150);
+                                BattleshipSetupBoard.randomizeSingleShip(ships[startIdx + idx], ships, 150);
                                 ships.forEach(ship => ship.optionsActive = false);
                                 this.setState({
                                     ships: ships,
