@@ -183,6 +183,9 @@ class Battlechess {
             castling = castling.replace('k', '');
             castling = castling.replace('q', '');
         }
+        if (castling === '') {
+            castling = '-';
+        }
         newFen[2] = castling;
         return newFen.join(" ");
     }
