@@ -1,3 +1,7 @@
+import { KNIGHT } from "chess.js";
+import { ROOK } from "chess.js";
+import { BISHOP } from "chess.js";
+import { PAWN } from "chess.js";
 import { Chess, SQUARES, QUEEN, WHITE, BLACK, KING } from "chess.js";
 
 const defaultFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -277,12 +281,41 @@ class Battlechess {
     takeKing() {
         for (let square of SQUARES) {
             for (let move of this.moves(square)) {
-                if (this.get(move.to) && this.get(move.to).type === 'k') {
+                if (this.get(move.to) && this.get(move.to).type === KING) {
                     return move;
                 }
             }
         }
         return null;
+    }
+
+    pieceValue(piece) {
+        switch (piece.type) {
+            case PAWN:
+                return 1;
+            case KNIGHT:
+            case BISHOP:
+                return 3;
+            case ROOK:
+                return 5;
+            case QUEEN:
+                return 9;
+            default:
+                return 0;
+        }
+    }
+
+    pieceDifference(color) {
+        let pieceCount = { [PAWN]: 0, [KNIGHT]: 0, [BISHOP]: 0, [ROOK]: 0, [QUEEN]: 0, [KING]: 0 };
+        for (let square of SQUARES) {
+            if (this.get(square) && this.get(square).color === color) {
+                pieceCount[this.get(square).type] += 1;
+            }
+            else if (this.get(square) && this.get(square).color !== color) {
+                pieceCount[this.get(square).type] -= 1;
+            }
+        }
+        return pieceCount;
     }
 }
 

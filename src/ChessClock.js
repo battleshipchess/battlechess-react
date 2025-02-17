@@ -1,5 +1,8 @@
 import React from "react";
 import "./ChessClock.css";
+import PieceDifferenceIndicator from "./PieceDifferenceIndicator";
+import { WHITE } from "chess.js";
+import { BLACK } from "chess.js";
 
 class ChessClock extends React.Component {
     constructor(props) {
@@ -92,6 +95,7 @@ class ChessClock extends React.Component {
                 <div>
                     <div>Opponent</div>
                     <div id="opponent_time" className={opponentClass}>{liveIndicator}{this.state.opponentTime}</div>
+                    <PieceDifferenceIndicator chess={this.props.chess} color={this.props.color === WHITE ? BLACK : WHITE} />
                 </div>
                 <div className={turn_indicator[0]} />
             </div>
@@ -100,6 +104,7 @@ class ChessClock extends React.Component {
                 <div>
                     <div>You</div>
                     <div id="own_time" className={playerClass}>{this.state.playerTime}</div>
+                    <PieceDifferenceIndicator chess={this.props.chess} color={this.props.color} />
                 </div>
                 <div />
             </div>
