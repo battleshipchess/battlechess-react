@@ -469,7 +469,17 @@ class BattleshipSetupBoard extends React.Component {
             if (!ref.current) return;
             ref.current.removeEventListener("long-press", this.showOptions);
             ref.current.addEventListener("long-press", this.showOptions);
-        })
+
+            // mobile safari shenanigans https://stackoverflow.com/a/51488289
+            ref.current.removeEventListener('touchstart', () => {});
+            ref.current.removeEventListener('touchend', () => {});
+            ref.current.removeEventListener('touchcancel', () => {});
+            ref.current.removeEventListener('touchmove', () => {});
+            ref.current.addEventListener('touchstart', () => {});
+            ref.current.addEventListener('touchend', () => {});
+            ref.current.addEventListener('touchcancel', () => {});
+            ref.current.addEventListener('touchmove', () => {});
+})
     }
 
     renderSelectStockfishStrength() {
