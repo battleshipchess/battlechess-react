@@ -66,7 +66,10 @@
 
 .shipOverlay[data-content="x"],
 .shipOverlay[data-content="i"] {
-    background-color: white;
+    background-image: url('./png/shot.png');
+    background-size: cover;
+    opacity: .2;
+    border: 2px solid black;
     box-sizing: border-box;
 }
 
