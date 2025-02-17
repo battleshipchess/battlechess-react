@@ -48,9 +48,10 @@ const boardStates = {
 
 
 function randomId() {
-    const dateString = Date.now().toString(36);
-    const randomness = Math.random().toString(36).substring(2);
-    return dateString + randomness;
+    const dateString = Date.now().toString(36).substring(4);
+    const randomness1 = Math.random().toString(36).substring(6);
+    const randomness2 = Math.random().toString(36).substring(6);
+    return randomness1 + dateString + randomness2;
 }
 
 function playSound(move) {

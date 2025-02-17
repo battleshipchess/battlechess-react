@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 import Battlechess from './Battlechess';
 import AppRender from './AppRender';
 import Utils from './Utils';
+import { startStockfishPlayer } from './StockfishPlayer';
 class App extends React.Component {
 
     constructor(props) {
@@ -177,6 +178,13 @@ class App extends React.Component {
                 isOpponentLive: data.isOpponentLive,
                 lastMoveSoundPlayed: data.moveHistory.length
             })
+
+            var url = new URL(window.location.href);
+            var stockfish = url.searchParams.get("stockfish");
+            if (stockfish && !data.isOpponentLive)
+            {
+                startStockfishPlayer('', 'stockfish' + this.state.playerId, stockfish)
+            }
         }
     }
 
@@ -244,6 +252,8 @@ class App extends React.Component {
             gameState: Utils.gameStates.waiting_for_opponent,
             gameCode: gameCode,
         })
+
+        return this.state.playerId;
     }
 
     resetGame() {

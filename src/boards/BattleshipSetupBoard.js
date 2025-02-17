@@ -317,8 +317,9 @@ class BattleshipSetupBoard extends React.Component {
 
     startStockfishGame(strength) {
         const gameCode = 'stockfish' + this.randomGameCode();
-        this.props.onBoardSetupCompleted(this.state.ships, gameCode);
-        startStockfishPlayer(gameCode, strength);
+        let playerId = this.props.onBoardSetupCompleted(this.state.ships, gameCode);
+        window.history.pushState({}, '', `?stockfish=${strength}`);
+        startStockfishPlayer(gameCode, "stockfish" + playerId, strength);
     }
 
     pieceOverlay(x, y) {
