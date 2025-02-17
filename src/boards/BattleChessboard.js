@@ -141,7 +141,9 @@ function BattleChessboard(props) {
         let [x, y] = calculateCoordinates(event, props.color, Utils.boardSize);
 
         let piece = props.chess.get(square(x, y));
-        if (piece && piece.color === props.color) {
+        if (props.selectedPiece && props.selectedPiece.x === x && props.selectedPiece.y === y) {
+            props.deselectPiece();
+        } else if (piece && piece.color === props.color) {
             props.selectPiece(x, y);
         } else if (props.selectedPiece) {
             let from = square(props.selectedPiece.x, props.selectedPiece.y);
