@@ -91,6 +91,11 @@
     box-sizing: border-box;
 }
 
+.shipOverlay[data-content="r"] {
+    background-color: var(--primary-ship-color-light);
+    border: 2px solid black;
+    box-sizing: border-box;
+}
 
 
 

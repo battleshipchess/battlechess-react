@@ -44,6 +44,7 @@ const boardStates = {
     ship: 's',
     hit: '+',
     sunk: '#',
+    revealed: 'r',
 }
 
 
