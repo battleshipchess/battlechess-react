@@ -226,7 +226,7 @@ class App extends React.Component {
         })
     }
 
-    onBoardSetupCompleted(ships, gameCode) {
+    onBoardSetupCompleted(ships, gameCode, timeControl) {
         let board = JSON.parse(JSON.stringify(this.state.board));
         ships.forEach(ship => {
             for (let x = ship.position.x; x < ship.position.x + ship.position.width; x++) {
@@ -245,6 +245,7 @@ class App extends React.Component {
             playerId: this.state.playerId,
             board: board,
             gameCode: gameCode,
+            timeControl: timeControl,
         }));
         
         this.setState({

@@ -308,18 +308,33 @@ class BattleshipSetupBoard extends React.Component {
     }
 
     startGame() {
-        this.props.onBoardSetupCompleted(this.state.ships, this.props.gameCode);
+        this.setState({
+            selectTimeControl: true,
+            startGameCallback: (timeControl) => {
+                this.props.onBoardSetupCompleted(this.state.ships, this.props.gameCode, timeControl);
+            }
+        })
     }
 
     startPrivateGame() {
-        this.props.onBoardSetupCompleted(this.state.ships, this.randomGameCode());
+        this.setState({
+            selectTimeControl: true,
+            startGameCallback: (timeControl) => {
+                this.props.onBoardSetupCompleted(this.state.ships, this.randomGameCode(), timeControl);
+            }
+        })
     }
 
     startStockfishGame(strength) {
-        const gameCode = 'stockfish' + this.randomGameCode();
-        let playerId = this.props.onBoardSetupCompleted(this.state.ships, gameCode);
-        window.history.pushState({}, '', `?stockfish=${strength}`);
-        startStockfishPlayer(gameCode, "stockfish" + playerId, strength);
+        this.setState({
+            selectTimeControl: true,
+            startGameCallback: (timeControl) => {
+                const gameCode = 'stockfish' + this.randomGameCode();
+                let playerId = this.props.onBoardSetupCompleted(this.state.ships, gameCode, timeControl);
+                window.history.pushState({}, '', `?stockfish=${strength}`);
+                startStockfishPlayer(gameCode, "stockfish" + playerId, strength);
+            }
+        })
     }
 
     pieceOverlay(x, y) {
@@ -492,6 +507,7 @@ class BattleshipSetupBoard extends React.Component {
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(strength =>
                         <input type="button" data-type='primary' style={{ padding: '1em' }} value={strength} key={strength} onClick={() => {
                             document.getElementsByTagName('body')[0].classList.remove("noscroll");
+                            this.setState({ selectStockfishStrength: false })
                             this.startStockfishGame(strength)
                         }} />)}
                 </div>
@@ -503,12 +519,34 @@ class BattleshipSetupBoard extends React.Component {
         </div>
     }
 
+    renderSelectTimeControl() {
+        document.getElementsByTagName('body')[0].classList.add("noscroll");
+        return <div className='overlayModal'>
+            <div>
+                <div>Choose time control</div>
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '.25em', flexWrap: 'wrap' }}>
+                    {['1+0', '3+2', '5+3', '10+5', '15+10', 'any'].map(timeControl =>
+                        <input type='button' data-type='primary' style={{ padding: '1em' }} value={timeControl} key={timeControl} onClick={() => {
+                            document.getElementsByTagName('body')[0].classList.remove('noscroll');
+                            this.setState({ selectTimeControl: false });
+                            this.state.startGameCallback(timeControl === 'any' ? null : timeControl);
+                        }} />)}
+                </div>
+                <input type='button' value='Cancel' onClick={() => {
+                    document.getElementsByTagName('body')[0].classList.remove('noscroll');
+                    this.setState({ selectTimeControl: false })
+                }} />
+            </div>
+        </div>
+    }
+
     render() {
         return (
             <div className="battleship_board_container">
                 {this.shipyard()}
                 {this.board()}
                 {this.state.selectStockfishStrength ? this.renderSelectStockfishStrength() : null}
+                {this.state.selectTimeControl ? this.renderSelectTimeControl() : null}
             </div>
         );
     }
