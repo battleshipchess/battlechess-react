@@ -41,6 +41,7 @@ function GameFooter(props) {
                                 <li>When you move a chesspiece, you simultaneously shoot at your opponents fleet (right side)</li>
                                 <li>When your opponent moves, they shoot at your own fleet (left side)</li>
                                 <li>When you hit a ship, you get to move again</li>
+                                <li>When you capture a piece, all surrounding squares are revealed</li>
                                 <li>Win by capturing your opponents king or by sinking his entire fleet</li>
                             </ul>
                         </div>
