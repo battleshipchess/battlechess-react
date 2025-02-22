@@ -81,7 +81,7 @@ function renderWinner() {
 }
 
 function renderPermanentGameURL() {
-    let url = "https://battleshipchess.club/?archive=" + this.state.playerId;
+    let url = "https://battleshipchess.github.io/?archive=" + this.state.playerId;
     return (<div className="permanent_game_url">Here's a permanent URL to this game: <a href={url}>{url}</a></div>);
 }
 
@@ -138,7 +138,7 @@ function renderWaitingForOpponent() {
             </div>
         );
     } else {
-        let url = "https://battleshipchess.club/?game=" + this.state.gameCode;
+        let url = "https://battleshipchess.github.io/?game=" + this.state.gameCode;
         return (
             <div className="App">
                 <AppHeader message="Waiting for opponent" />
