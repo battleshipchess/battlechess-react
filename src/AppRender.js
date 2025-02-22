@@ -108,7 +108,6 @@ function renderGameOver() {
 }
 
 function renderArchivedGame() {
-    console.log("asdf");
     return (
         <div className="App">
             <AppHeader message="Battleshipchess" />
